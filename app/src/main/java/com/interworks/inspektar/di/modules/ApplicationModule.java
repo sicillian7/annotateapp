@@ -4,10 +4,14 @@ import android.app.Application;
 import android.content.Context;
 
 import com.interworks.inspektar.InspektARApplication;
+import com.interworks.inspektar.UIThread;
 import com.interworks.inspektar.di.scopes.ApplicationScope;
+
+import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import mk.com.interworks.data.executor.JobExecutor;
 import mk.com.interworks.domain.executor.PostExecutionThread;
 import mk.com.interworks.domain.executor.ThreadExecutor;
 
@@ -20,21 +24,21 @@ public class ApplicationModule {
         this.mApplication = mApplication;
     }
 
-    @ApplicationScope
+    @Singleton
     @Provides
     public Context providesApplication(){
         return mApplication;
     }
 
-    @ApplicationScope
+    @Singleton
     @Provides
-    ThreadExecutor provideThreadExecutor(ThreadExecutor jobExecutor) {
+    ThreadExecutor provideThreadExecutor(JobExecutor jobExecutor) {
         return jobExecutor;
     }
 
-    @ApplicationScope
+    @Singleton
     @Provides
-    PostExecutionThread providePostExecutionThread(PostExecutionThread uiThread) {
+    PostExecutionThread providePostExecutionThread(UIThread uiThread) {
         return uiThread;
     }
 }

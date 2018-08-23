@@ -8,11 +8,13 @@ import com.interworks.inspektar.di.modules.ApplicationModule;
 import com.interworks.inspektar.di.modules.PersistenceModule;
 import com.interworks.inspektar.di.scopes.ApplicationScope;
 
+import javax.inject.Singleton;
+
 import dagger.Component;
 import mk.com.interworks.domain.executor.PostExecutionThread;
 import mk.com.interworks.domain.executor.ThreadExecutor;
 
-@ApplicationScope
+@Singleton
 @Component(modules = {ApplicationModule.class, PersistenceModule.class})
 public interface ApplicationComponent {
     void inject(BaseActivity baseActivity);

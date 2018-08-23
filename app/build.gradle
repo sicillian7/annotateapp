@@ -34,6 +34,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation  "com.google.dagger:dagger:$dagger_version"
     annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
+
+    implementation "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
+    implementation 'io.reactivex:rxjava-joins:0.22.0'
+
     implementation project(path: ':domain')
 
     implementation "com.jakewharton:butterknife:$butterknife_version"

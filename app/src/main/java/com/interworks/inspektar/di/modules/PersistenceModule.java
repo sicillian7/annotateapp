@@ -14,7 +14,7 @@ import mk.com.interworks.domain.repository.LocalDataRepository;
 @Module
 public class PersistenceModule {
 
-    @ApplicationScope
+    @Singleton
     @Provides
     LocalDataRepository provideLocalDataRepository(Context context){
         return new LocalDataSource(context);
