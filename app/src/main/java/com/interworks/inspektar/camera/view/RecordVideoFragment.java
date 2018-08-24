@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.hardware.camera2.CameraAccessException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -117,6 +118,15 @@ public class RecordVideoFragment extends Fragment {
                 mCameraService.startRecordingVideo();
             }
             isRecording = !isRecording;
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.v(TAG, "onConfigurationChanged");
+        if (mCameraService != null) {
+            mCameraService.setDisplayOrientation();
         }
     }
 

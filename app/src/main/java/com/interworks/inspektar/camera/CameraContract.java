@@ -8,4 +8,5 @@ public interface CameraContract {
     void stopRecordingVideo();
     void releaseCamera();
     CameraPreview appendCameraPreview();
+    void setDisplayOrientation();
 }

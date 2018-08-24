@@ -1,15 +1,15 @@
 package com.interworks.inspektar.camera;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
-import android.hardware.camera2.CameraDevice;
+import android.hardware.camera2.CameraCharacteristics;
+import android.hardware.camera2.CameraManager;
+import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Environment;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.OrientationEventListener;
@@ -21,20 +21,16 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.concurrent.Semaphore;
 
 public class CameraService implements CameraContract{
 
     private static final String TAG = CameraService.class.getName();
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 2;
-
     private static final int SENSOR_ORIENTATION_DEFAULT_DEGREES = 90;
     private static final int SENSOR_ORIENTATION_INVERSE_DEGREES = 270;
     private static final SparseIntArray DEFAULT_ORIENTATIONS = new SparseIntArray();
     private static final SparseIntArray INVERSE_ORIENTATIONS = new SparseIntArray();
-    private Integer mSensorOrientation;
-
 
 
     static {
@@ -52,14 +48,18 @@ public class CameraService implements CameraContract{
     }
 
     private String mNextVideoAbsolutePath;
-    private Semaphore mCameraOpenCloseLock = new Semaphore(1);
-    private boolean mAutoRotateScreen;
-    private int mLastRawOrientation;
     private MyOrientationEventListener mOrientationListener;
-    //private VideoModule mCurrentModule;
+
+    private int mDisplayRotation;
+    private int mCameraDisplayOrientation;
+
+    private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
+    private int mLastRawOrientation;
+    private OrientationManager mOrientationManager;
+
+    private Integer mSensorOrientation;
 
     private Camera mCamera;
-    private CameraDevice mCameraDevice;
     private CameraPreview mCameraPreview;
     private Activity mContext;
     private MediaRecorder mMediaRecorder;
@@ -73,6 +73,18 @@ public class CameraService implements CameraContract{
         try {
             mCamera = Camera.open(); // attempt to get a Camera instance
             mCameraPreview = new CameraPreview(mContext, mCamera);
+            mOrientationManager = new OrientationManager(mContext);
+            setDisplayOrientation();
+
+            android.hardware.camera2.CameraManager manager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
+            if (manager != null) {
+                String cameraId = manager.getCameraIdList()[0];
+                CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraId);
+                StreamConfigurationMap map = characteristics
+                        .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+                mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+            }
+
         }
         catch (Exception e){
             // Camera is not available (in use or does not exist)
@@ -84,6 +96,7 @@ public class CameraService implements CameraContract{
     public void startRecordingVideo() {
         try {
             if (prepareVideoRecorder()) {
+                mOrientationManager.lockOrientation();
                 mMediaRecorder.start();
             } else {
                 releaseMediaRecorder();
@@ -98,6 +111,7 @@ public class CameraService implements CameraContract{
     public void stopRecordingVideo() {
         mMediaRecorder.stop();  // stop the recording
         releaseMediaRecorder(); // release the MediaRecorder object
+        mOrientationManager.unlockOrientation();
         mCamera.lock();
     }
 
@@ -105,6 +119,16 @@ public class CameraService implements CameraContract{
     public CameraPreview appendCameraPreview() {
         setCameraDisplayOrientation(mContext,0, mCamera);
         return mCameraPreview;
+    }
+
+    @Override
+    public void setDisplayOrientation() {
+        mDisplayRotation = CameraUtil.getDisplayRotation(mContext);
+        mCameraDisplayOrientation = CameraUtil.getDisplayOrientation(mDisplayRotation, 0);
+        // Change the camera display orientation
+        if (mCamera != null) {
+            mCamera.setDisplayOrientation(mCameraDisplayOrientation);
+        }
     }
 
     public boolean prepareVideoRecorder() throws IOException {
@@ -134,20 +158,15 @@ public class CameraService implements CameraContract{
 
         mMediaRecorder.setVideoEncodingBitRate(10000000);
         mMediaRecorder.setVideoFrameRate(30);
-        //mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
-//        mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-//        mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-//        int rotation = mContext.getWindowManager().getDefaultDisplay().getRotation();
-//        switch (mSensorOrientation) {
-//            case SENSOR_ORIENTATION_DEFAULT_DEGREES:
-//                mMediaRecorder.setOrientationHint(DEFAULT_ORIENTATIONS.get(rotation));
-//                break;
-//            case SENSOR_ORIENTATION_INVERSE_DEGREES:
-//                mMediaRecorder.setOrientationHint(INVERSE_ORIENTATIONS.get(rotation));
-//                break;
-//        }
-
-
+        int rotation = mContext.getWindowManager().getDefaultDisplay().getRotation();
+        switch (mSensorOrientation) {
+            case SENSOR_ORIENTATION_DEFAULT_DEGREES:
+                mMediaRecorder.setOrientationHint(DEFAULT_ORIENTATIONS.get(rotation));
+                break;
+            case SENSOR_ORIENTATION_INVERSE_DEGREES:
+                mMediaRecorder.setOrientationHint(INVERSE_ORIENTATIONS.get(rotation));
+                break;
+        }
 
         // Step 6: Prepare configured MediaRecorder
         try {
@@ -263,7 +282,13 @@ public class CameraService implements CameraContract{
                 return;
             }
             mLastRawOrientation = orientation;
-          //  mCurrentModule.onOrientationChanged(orientation);
+            if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN)
+                return;
+            int newOrientation = CameraUtil.roundOrientation(orientation, mOrientation);
+
+            if (mOrientation != newOrientation) {
+                mOrientation = newOrientation;
+            }
         }
     }
 }
