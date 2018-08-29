@@ -16,6 +16,7 @@ public class KeywordEntity{
     public static final String IMAGE_URI = "image_uri";
     public static final String NAME = "name";
     public static final String OLD = "old";
+    public static final String RES_PATH = "resPath";
     public static final String VERSION = "version";
 
 
@@ -35,6 +36,8 @@ public class KeywordEntity{
     private String name;
     @ColumnInfo(name = OLD)
     private long old;
+    @ColumnInfo(name = RES_PATH)
+    private String resPath;
     @ColumnInfo(name = VERSION)
     private long version;
 
@@ -101,5 +104,13 @@ public class KeywordEntity{
 
     public void setBookmarked(boolean bookmarked) {
         this.bookmarked = bookmarked;
+    }
+
+    public String getResPath() {
+        return resPath;
+    }
+
+    public void setResPath(String resPath) {
+        this.resPath = resPath;
     }
 }

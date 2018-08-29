@@ -1,8 +1,14 @@
 package mk.com.interworks.data;
 
+import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Room;
+import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
+import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import io.reactivex.Completable;
@@ -21,8 +27,70 @@ public class LocalDataSource implements LocalDataRepository{
 
     public LocalDataSource(Context context) {
 
+
+        RoomDatabase.Callback rdc = new RoomDatabase.Callback() {
+            public void onCreate (SupportSQLiteDatabase db) {
+                // do something after database has been created
+                executeScript(context, R.raw.sql_default_categories, db);
+            }
+            public void onOpen (SupportSQLiteDatabase db) {
+                // do something every time database is open
+            }
+        };
+
         _db = Room.databaseBuilder(context,
-                LocalDB.class, Constants.APP_DB_NAME).build();
+                LocalDB.class, Constants.APP_DB_NAME)
+                .addCallback(rdc)
+                .build();
+
+    }
+
+    private static void executeScript(Context context, int scriptFilename, SupportSQLiteDatabase myDB) {
+        Log.i("executeScript" + scriptFilename, "Start");
+        try {
+            myDB.beginTransaction();
+            loadFile(context, scriptFilename, myDB);
+            myDB.setTransactionSuccessful();
+
+        } catch (Exception e) {
+            Log.e("initialzeDatabase", "Error", e);
+        } finally {
+            myDB.endTransaction();
+        }
+        Log.i("executeScript" + scriptFilename, "End");
+    }
+
+    private static String loadFile(Context context, int dbDDLFile, SupportSQLiteDatabase myDB) {
+        StringBuffer buffer = new StringBuffer();
+        String expressions = "";
+
+        try {
+            InputStream is = context.getResources().openRawResource(dbDDLFile);
+            if (is != null) {
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim();
+                    if (!line.startsWith("--")) {
+                        buffer.append(line);
+                        if (line.endsWith(";")) {
+                            Log.i("execute", line);
+                            myDB.execSQL(buffer.toString().trim());
+                            buffer = new StringBuffer();
+                        } else {
+                            buffer.append(' ');
+                        }
+                    }
+                }
+                reader.close();
+            }
+
+        } catch (Exception e) {
+            Log.e("initialzeDatabase", "Error", e);
+        }
+        return expressions;
+
     }
 
     @Override

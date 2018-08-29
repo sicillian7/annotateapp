@@ -8,8 +8,6 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
-import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.OrientationEventListener;
@@ -19,14 +17,10 @@ import com.interworks.inspektar.camera.view.CameraPreview;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class CameraService implements CameraContract{
 
     private static final String TAG = CameraService.class.getName();
-    public static final int MEDIA_TYPE_IMAGE = 1;
-    public static final int MEDIA_TYPE_VIDEO = 2;
     private static final int SENSOR_ORIENTATION_DEFAULT_DEGREES = 90;
     private static final int SENSOR_ORIENTATION_INVERSE_DEGREES = 270;
     private static final SparseIntArray DEFAULT_ORIENTATIONS = new SparseIntArray();
@@ -48,8 +42,6 @@ public class CameraService implements CameraContract{
     }
 
     private String mNextVideoAbsolutePath;
-    private MyOrientationEventListener mOrientationListener;
-
     private int mDisplayRotation;
     private int mCameraDisplayOrientation;
 
@@ -134,25 +126,15 @@ public class CameraService implements CameraContract{
     public boolean prepareVideoRecorder() throws IOException {
 
         mMediaRecorder = new MediaRecorder();
-
-        // Step 1: Unlock and set camera to MediaRecorder
         mCamera.unlock();
         mMediaRecorder.setCamera(mCamera);
-
-        // Step 2: Set sources
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-
-        // Step 3: Set a CamcorderProfile (requires API Level 8 or higher)
         mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
-
-        // Step 4: Set output file
         if (mNextVideoAbsolutePath == null || mNextVideoAbsolutePath.isEmpty()) {
             mNextVideoAbsolutePath = getVideoFilePath(mContext);
         }
         mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
-
-        // Step 5: Set the preview output
         mMediaRecorder.setPreviewDisplay(mCameraPreview.getHolder().getSurface());
 
 
@@ -167,8 +149,6 @@ public class CameraService implements CameraContract{
                 mMediaRecorder.setOrientationHint(INVERSE_ORIENTATIONS.get(rotation));
                 break;
         }
-
-        // Step 6: Prepare configured MediaRecorder
         try {
             mMediaRecorder.prepare();
         } catch (IllegalStateException e) {
@@ -208,48 +188,11 @@ public class CameraService implements CameraContract{
         camera.setDisplayOrientation(result);
     }
 
-    private static Uri getOutputMediaFileUri(int type){
-        return Uri.fromFile(getOutputMediaFile(type));
-    }
 
     private String getVideoFilePath(Context context) {
         final File dir = context.getExternalFilesDir(null);
         return (dir == null ? "" : (dir.getAbsolutePath() + "/"))
                 + System.currentTimeMillis() + ".mp4";
-    }
-
-    /** Create a File for saving an image or video */
-    private static File getOutputMediaFile(int type){
-        // To be safe, you should check that the SDCard is mounted
-        // using Environment.getExternalStorageState() before doing this.
-
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_MOVIES), "InspektAR");
-        // This location works best if you want the created images to be shared
-        // between applications and persist after your app has been uninstalled.
-
-        // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                Log.d("InspektAR", "failed to create directory");
-                return null;
-            }
-        }
-
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE){
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_"+ timeStamp + ".jpg");
-        } else if(type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ timeStamp + ".mp4");
-        } else {
-            return null;
-        }
-
-        return mediaFile;
     }
 
     private void releaseMediaRecorder(){
@@ -265,30 +208,6 @@ public class CameraService implements CameraContract{
         if (mCamera != null){
             mCamera.release();        // release the camera for other applications
             mCamera = null;
-        }
-    }
-
-    private class MyOrientationEventListener extends OrientationEventListener {
-        public MyOrientationEventListener(Context context) {
-            super(context);
-        }
-
-        @Override
-        public void onOrientationChanged(int orientation) {
-            // We keep the last known orientation. So if the user first orient
-            // the camera then point the camera to floor or sky, we still have
-            // the correct orientation.
-            if (orientation == ORIENTATION_UNKNOWN) {
-                return;
-            }
-            mLastRawOrientation = orientation;
-            if (orientation == OrientationEventListener.ORIENTATION_UNKNOWN)
-                return;
-            int newOrientation = CameraUtil.roundOrientation(orientation, mOrientation);
-
-            if (mOrientation != newOrientation) {
-                mOrientation = newOrientation;
-            }
         }
     }
 }

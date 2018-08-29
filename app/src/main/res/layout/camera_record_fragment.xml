@@ -4,17 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<com.interworks.inspektar.camera.view.AutoFitTextureView-->
-        <!--android:id="@+id/mTextureView"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent" />-->
-
-    <!--<com.wonderkiln.camerakit.CameraView-->
-        <!--android:id="@+id/cameraView"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:adjustViewBounds="true" />-->
-
     <FrameLayout
         android:id="@+id/camera_preview"
         android:layout_width="fill_parent"
@@ -38,7 +27,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="Video title"
+                android:text="Default"
                 android:textColor="@color/white"/>
         </FrameLayout>
         <FrameLayout

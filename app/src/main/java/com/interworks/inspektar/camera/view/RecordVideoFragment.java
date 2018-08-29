@@ -3,11 +3,8 @@ package com.interworks.inspektar.camera.view;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.hardware.camera2.CameraAccessException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,22 +14,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
-import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.interworks.inspektar.R;
+import com.interworks.inspektar.camera.CameraContract;
 import com.interworks.inspektar.camera.CameraService;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.ref.WeakReference;
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,7 +33,7 @@ import butterknife.Unbinder;
 
 public class RecordVideoFragment extends Fragment {
 
-    private static final String TAG = "Camera2VideoFragment";
+    private static final String TAG = RecordVideoFragment.class.getName();
     private static final int REQUEST_VIDEO_PERMISSIONS = 1;
     private static final String FRAGMENT_DIALOG = "dialog";
 
@@ -51,13 +43,12 @@ public class RecordVideoFragment extends Fragment {
     };
 
 
-    CameraService mCameraService;
-
-    private Unbinder unbinder;
-    private Activity mActivity;
+    @Inject
+    CameraContract mCameraService;
+    Unbinder unbinder;
+    @Inject
+    Activity mActivity;
     private boolean isRecording;
-//    @BindView(R.id.mTextureView)
-//    AutoFitTextureView textureView;
     @BindView(R.id.btnRecord)
     ImageButton mButtonVideo;
     @BindView(R.id.camera_preview)
@@ -82,8 +73,6 @@ public class RecordVideoFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mActivity = getActivity();
-
         if (!hasPermissionsGranted(VIDEO_PERMISSIONS)) {
             requestVideoPermissions();
             return;
@@ -91,8 +80,6 @@ public class RecordVideoFragment extends Fragment {
         if (mActivity.isFinishing()) {
             return;
         }
-
-        mCameraService = new CameraService(mActivity);
         mCameraPreview.addView(mCameraService.appendCameraPreview());
     }
 
@@ -175,13 +162,13 @@ public class RecordVideoFragment extends Fragment {
             if (grantResults.length == VIDEO_PERMISSIONS.length) {
                 for (int result : grantResults) {
                     if (result != PackageManager.PERMISSION_GRANTED) {
-                        CameraRecordFragment.ErrorDialog.newInstance(mActivity.getResources().getString(R.string.permission_request))
+                        ErrorDialog.newInstance(mActivity.getResources().getString(R.string.permission_request))
                                 .show(getChildFragmentManager(), FRAGMENT_DIALOG);
                         break;
                     }
                 }
             } else {
-                CameraRecordFragment.ErrorDialog.newInstance(getString(R.string.permission_request))
+                ErrorDialog.newInstance(getString(R.string.permission_request))
                         .show(getChildFragmentManager(), FRAGMENT_DIALOG);
             }
         } else {
@@ -268,20 +255,33 @@ public class RecordVideoFragment extends Fragment {
             final Fragment parent = getParentFragment();
             return new AlertDialog.Builder(getActivity())
                     .setMessage(R.string.permission_request)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            requestPermissions(VIDEO_PERMISSIONS,
-                                    REQUEST_VIDEO_PERMISSIONS);
-                        }
-                    })
+                    .setPositiveButton(android.R.string.ok, (dialog, which) -> requestPermissions(VIDEO_PERMISSIONS,
+                            REQUEST_VIDEO_PERMISSIONS))
                     .setNegativeButton(android.R.string.cancel,
-                            new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    parent.getActivity().finish();
-                                }
-                            })
+                            (dialog, which) -> parent.getActivity().finish())
+                    .create();
+        }
+
+    }
+
+    public static class ErrorDialog extends DialogFragment {
+
+        private static final String ARG_MESSAGE = "message";
+
+        public static ErrorDialog newInstance(String message) {
+            ErrorDialog dialog = new ErrorDialog();
+            Bundle args = new Bundle();
+            args.putString(ARG_MESSAGE, message);
+            dialog.setArguments(args);
+            return dialog;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Activity activity = getActivity();
+            return new AlertDialog.Builder(activity)
+                    .setMessage(getArguments().getString(ARG_MESSAGE))
+                    .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> activity.finish())
                     .create();
         }
 
