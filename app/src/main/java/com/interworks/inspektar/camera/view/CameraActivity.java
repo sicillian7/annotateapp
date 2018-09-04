@@ -14,10 +14,14 @@ import com.interworks.inspektar.di.modules.ActivityModule;
 import com.interworks.inspektar.di.modules.CameraModule;
 import com.interworks.inspektar.di.modules.DomainModule;
 
+import javax.inject.Inject;
+
 public class CameraActivity extends BaseActivity{
 
     private CameraComponent mCameraComponent;
     private DomainComponent mDomainComponent;
+    @Inject
+    RecordVideoFragment mRecordVideoFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +35,9 @@ public class CameraActivity extends BaseActivity{
                 .activityModule(new ActivityModule(this))
                 .cameraModule(new CameraModule())
                 .build();
-        RecordVideoFragment frag = RecordVideoFragment.newInstance();
-        mCameraComponent.inject(frag);
-        addFragment(R.id.container, frag);
+        mCameraComponent.inject(this);
+        mCameraComponent.inject(mRecordVideoFragment);
+        addFragment(R.id.container, mRecordVideoFragment);
     }
 
     public static void startActivity(Context context){

@@ -26,5 +26,5 @@ public interface VideoDAO {
     List<VideoEntity> getAllVideos();
 
     @Query("SELECT * FROM " + Constants.VIDEO_TABLE_NAME + " WHERE " + BaseEntity.ID + "=:videoId")
-    VideoEntity getVideoById(int videoId);
+    VideoEntity getVideoById(long videoId);
 }

@@ -25,8 +25,8 @@ public interface AnnotationDAO {
     void delete(AnnotationEntity annotation);
 
     @Query("SELECT * FROM " + Constants.ANNOTATION_TABLE_NAME + " WHERE " + AnnotationEntity.VIDEO_ID + "=:videoId")
-    List<AnnotationEntity> getAnnotationsForVideo(int videoId);
+    List<AnnotationEntity> getAnnotationsForVideo(long videoId);
 
     @Query("DELETE FROM " + Constants.ANNOTATION_TABLE_NAME + " WHERE " + AnnotationEntity.VIDEO_ID + "=:videoId")
-    void deleteAllAnnotationsForVideo(int videoId);
+    void deleteAllAnnotationsForVideo(long videoId);
 }

@@ -118,7 +118,7 @@ public class LocalDataSource implements LocalDataRepository{
     }
 
     @Override
-    public Single<VideoEntity> getVideoById(int id) {
+    public Single<VideoEntity> getVideoById(long id) {
         return  Single.create( e -> {
             try{
                 VideoEntity video = _db.videoDAO().getVideoById(id);
@@ -172,7 +172,7 @@ public class LocalDataSource implements LocalDataRepository{
     }
 
     @Override
-    public Single<List<AnnotationEntity>> getAnnotationsForVideo(int videoId) {
+    public Single<List<AnnotationEntity>> getAnnotationsForVideo(long videoId) {
         return Single.create(e -> {
             try {
                 List<AnnotationEntity> lsItems = _db.annotationDAO().getAnnotationsForVideo(videoId);
@@ -194,12 +194,24 @@ public class LocalDataSource implements LocalDataRepository{
     }
 
     @Override
-    public Single<List<KeywordEntity>> getKeywordsForCategory(int categoryId) {
-        return null;
+    public Single<List<KeywordEntity>> getKeywordsForCategory(long categoryId) {
+            return Single.create(e -> {
+                try {
+                    List<KeywordEntity> lsItems;
+                    if(categoryId > -1){
+                         lsItems = _db.keywordsDAO().getKeywordsForCategory(categoryId);
+                    }else{
+                        lsItems = _db.keywordsDAO().getDefaultKeywords();
+                    }
+                    e.onSuccess(lsItems);
+                }catch (Exception e1){
+                    e.onError(e1);
+                }
+            });
     }
 
     @Override
-    public Single<List<NoteEntity>> getNotesForAnnotation(int annotationId) {
+    public Single<List<NoteEntity>> getNotesForAnnotation(long annotationId) {
         return null;
     }
 

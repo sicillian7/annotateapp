@@ -38,9 +38,9 @@ public class AnnotationEntity{
     @ColumnInfo(name = ACTION)
     private int action;
     @ColumnInfo(name = VIDEO_ID)
-    private int videoId;
+    private long videoId;
     @ColumnInfo(name = CATEGORY_ID)
-    private int categoryId;
+    private long categoryId;
     @ColumnInfo(name = DURATION)
     private float duration;
     @ColumnInfo(name = X)
@@ -50,7 +50,7 @@ public class AnnotationEntity{
     @ColumnInfo(name = START)
     private float from;
     @ColumnInfo(name = KEYWORD_ID)
-    private int keywordId;
+    private long keywordId;
     @ColumnInfo(name = NAME)
     private String name;
     @ColumnInfo(name = DESC)
@@ -75,19 +75,19 @@ public class AnnotationEntity{
         this.action = action;
     }
 
-    public int getVideoId() {
+    public long getVideoId() {
         return videoId;
     }
 
-    public void setVideoId(int videoId) {
+    public void setVideoId(long videoId) {
         this.videoId = videoId;
     }
 
-    public int getCategoryId() {
+    public long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(long categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -123,11 +123,11 @@ public class AnnotationEntity{
         this.from = from;
     }
 
-    public int getKeywordId() {
+    public long getKeywordId() {
         return keywordId;
     }
 
-    public void setKeywordId(int keywordId) {
+    public void setKeywordId(long keywordId) {
         this.keywordId = keywordId;
     }
 

@@ -14,16 +14,16 @@ public interface LocalDataRepository {
 
     Completable saveVideo(VideoEntity video);
     Single<List<VideoEntity>> getAllVideos();
-    Single<VideoEntity> getVideoById(int id);
+    Single<VideoEntity> getVideoById(long id);
     Completable removeVideo(VideoEntity video);
     Single<Integer> getVideoIdByName(String videoName);
     Completable addAnnotation(AnnotationEntity annotation);
     Completable removeAnnotation(AnnotationEntity annotation);
-    Single<List<AnnotationEntity>> getAnnotationsForVideo(int videoId);
+    Single<List<AnnotationEntity>> getAnnotationsForVideo(long videoId);
     Single<List<CategoryEntity>> getAllCategories();
     Single<List<KeywordEntity>> getAllKeywords();
-    Single<List<KeywordEntity>> getKeywordsForCategory(int categoryId);
-    Single<List<NoteEntity>> getNotesForAnnotation(int annotationId);
+    Single<List<KeywordEntity>> getKeywordsForCategory(long categoryId);
+    Single<List<NoteEntity>> getNotesForAnnotation(long annotationId);
     Completable addNoteForAnnotation(NoteEntity note);
     Completable removeNotes(List<NoteEntity> lsNotes);
 }

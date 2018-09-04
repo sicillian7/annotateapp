@@ -13,5 +13,6 @@ import dagger.Component;
 @PerActivity
 @Component(dependencies = {DomainComponent.class}, modules = {ActivityModule.class, CameraModule.class})
 public interface CameraComponent {
-    void inject(RecordVideoFragment act);
+    void inject(CameraActivity act);
+    void inject(RecordVideoFragment frag);
 }

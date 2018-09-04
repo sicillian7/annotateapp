@@ -1,5 +1,7 @@
 package com.interworks.inspektar.camera;
 
+import android.graphics.Rect;
+
 import com.interworks.inspektar.camera.view.CameraPreview;
 
 public interface CameraContract {
@@ -9,4 +11,5 @@ public interface CameraContract {
     void releaseCamera();
     CameraPreview appendCameraPreview();
     void setDisplayOrientation();
+    Rect getVideoArea();
 }

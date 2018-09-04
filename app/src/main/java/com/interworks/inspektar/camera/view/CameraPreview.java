@@ -1,7 +1,10 @@
 package com.interworks.inspektar.camera.view;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -14,6 +17,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     private SurfaceHolder mHolder;
     private Camera mCamera;
+    private int currentProfile;
 
     public CameraPreview(Context context, Camera camera) {
         super(context);

@@ -15,14 +15,21 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.interworks.inspektar.R;
+import com.interworks.inspektar.annotations.view.AnnotationGridDialog;
+import com.interworks.inspektar.annotations.viewModel.AnnotationViewModel;
+import com.interworks.inspektar.base.ViewModelFactory;
 import com.interworks.inspektar.camera.CameraContract;
 import com.interworks.inspektar.camera.CameraService;
+
+import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
@@ -53,6 +60,10 @@ public class RecordVideoFragment extends Fragment {
     ImageButton mButtonVideo;
     @BindView(R.id.camera_preview)
     FrameLayout mCameraPreview;
+    @Inject
+    AnnotationGridDialog keywordsDialog;
+//    @Inject
+//    ViewModelFactory mFactory;
 
     public RecordVideoFragment() {
     }
@@ -81,6 +92,8 @@ public class RecordVideoFragment extends Fragment {
             return;
         }
         mCameraPreview.addView(mCameraService.appendCameraPreview());
+        mCameraPreview.setOnTouchListener(new OnTouchListener(this));
+        keywordsDialog.setListener(new KeywordsDialogActionListener(this));
     }
 
     @Override
@@ -108,6 +121,11 @@ public class RecordVideoFragment extends Fragment {
         }
     }
 
+    public void displayKeywordsDialog(AnnotationViewModel m, float x, float y){
+        keywordsDialog.setViewModel(m);
+        keywordsDialog.show(x,y);
+    }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -123,12 +141,6 @@ public class RecordVideoFragment extends Fragment {
         super.onDestroyView();
     }
 
-    /**
-     * Gets whether you should show UI with rationale for requesting permissions.
-     *
-     * @param permissions The permissions your app wants to request.
-     * @return Whether you can show permission rationale UI.
-     */
     private boolean shouldShowRequestPermissionRationale(String[] permissions) {
         if (mActivity != null) {
             for (String permission : permissions) {
@@ -140,9 +152,6 @@ public class RecordVideoFragment extends Fragment {
         return false;
     }
 
-    /**
-     * Requests permissions needed for recording video.
-     */
     private void requestVideoPermissions() {
         if (mActivity != null) {
             if (shouldShowRequestPermissionRationale(VIDEO_PERMISSIONS)) {
@@ -188,66 +197,6 @@ public class RecordVideoFragment extends Fragment {
         return true;
     }
 
-
-//    public static class CameraActionListener implements CameraKitEventCallback<CameraKitVideo> {
-//
-//        private WeakReference<Activity> weakContext;
-//
-//        public CameraActionListener(Activity c) {
-//            weakContext = new WeakReference<>(c);
-//        }
-//
-//        @Override
-//        public void callback(CameraKitVideo cameraKitVideo) {
-//            Activity mActivity = weakContext.get();
-//            if (mActivity != null) {
-//                File video = cameraKitVideo.getVideoFile();
-//                if (Utils.isExternalStorageWritable()) {
-//                    try {
-//                        exportFile(video, Utils.getPublicAlbumStorageDir("InspektAR"));
-//                        Toast.makeText(mActivity, "File saved to: " + Utils.getPublicAlbumStorageDir("InspektAR").getAbsolutePath(), Toast.LENGTH_SHORT).show();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                        Toast.makeText(mActivity, "Failed saving file", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//            }
-//        }
-//
-//        private File exportFile(File src, File dst) throws IOException {
-//
-//            //if folder does not exist
-//            if (!dst.exists()) {
-//                if (!dst.mkdir()) {
-//                    return null;
-//                }
-//            }
-//
-//            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//            File expFile = new File(dst.getPath() + File.separator + "Video_" + timeStamp + ".mp4");
-//            FileChannel inChannel = null;
-//            FileChannel outChannel = null;
-//
-//            try {
-//                inChannel = new FileInputStream(src).getChannel();
-//                outChannel = new FileOutputStream(expFile).getChannel();
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            }
-//
-//            try {
-//                inChannel.transferTo(0, inChannel.size(), outChannel);
-//            } finally {
-//                if (inChannel != null)
-//                    inChannel.close();
-//                if (outChannel != null)
-//                    outChannel.close();
-//            }
-//
-//            return expFile;
-//        }
-//    }
-
     public static class ConfirmationDialog extends DialogFragment {
 
         @Override
@@ -285,5 +234,44 @@ public class RecordVideoFragment extends Fragment {
                     .create();
         }
 
+    }
+
+    private static class OnTouchListener implements View.OnTouchListener {
+
+        private WeakReference<RecordVideoFragment> weakFrag;
+
+        public OnTouchListener(RecordVideoFragment frag) {
+            weakFrag = new WeakReference<>(frag);
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            RecordVideoFragment frag = weakFrag.get();
+            if(motionEvent.getAction() == MotionEvent.ACTION_DOWN && frag != null){
+                AnnotationViewModel m = new AnnotationViewModel(motionEvent.getX(), motionEvent.getY(), frag.mCameraService.getVideoArea());
+                frag.displayKeywordsDialog(m, motionEvent.getX(), motionEvent.getY());
+            }else{
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    private static class KeywordsDialogActionListener implements AnnotationGridDialog.OnActionListener{
+        private WeakReference<RecordVideoFragment> weakFrag;
+
+        public KeywordsDialogActionListener(RecordVideoFragment frag) {
+            weakFrag = new WeakReference<>(frag);
+        }
+
+        @Override
+        public void onKeywordSelected(AnnotationViewModel vm) {
+            RecordVideoFragment frag = weakFrag.get();
+            if (frag != null) {
+                Toast.makeText(frag.mActivity, "ANNOTATED WITH KEYWORD WITH ID:" + String.valueOf(vm.getEntity().getKeywordId()), Toast.LENGTH_SHORT).show();
+            }
+
+        }
     }
 }

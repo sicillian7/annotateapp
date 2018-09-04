@@ -2,12 +2,14 @@ package com.interworks.inspektar.camera;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Rect;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.SparseIntArray;
 import android.view.OrientationEventListener;
@@ -55,6 +57,8 @@ public class CameraService implements CameraContract{
     private CameraPreview mCameraPreview;
     private Activity mContext;
     private MediaRecorder mMediaRecorder;
+    private CamcorderProfile mCurrentProfile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+    private Rect mVideoArea;
 
     public CameraService(Activity c) {
         mContext = c;
@@ -67,6 +71,8 @@ public class CameraService implements CameraContract{
             mCameraPreview = new CameraPreview(mContext, mCamera);
             mOrientationManager = new OrientationManager(mContext);
             setDisplayOrientation();
+
+            mVideoArea = calculateVideoArea();
 
             android.hardware.camera2.CameraManager manager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
             if (manager != null) {
@@ -130,14 +136,12 @@ public class CameraService implements CameraContract{
         mMediaRecorder.setCamera(mCamera);
         mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-        mMediaRecorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH));
+        mMediaRecorder.setProfile(mCurrentProfile);
         if (mNextVideoAbsolutePath == null || mNextVideoAbsolutePath.isEmpty()) {
             mNextVideoAbsolutePath = getVideoFilePath(mContext);
         }
         mMediaRecorder.setOutputFile(mNextVideoAbsolutePath);
         mMediaRecorder.setPreviewDisplay(mCameraPreview.getHolder().getSurface());
-
-
         mMediaRecorder.setVideoEncodingBitRate(10000000);
         mMediaRecorder.setVideoFrameRate(30);
         int rotation = mContext.getWindowManager().getDefaultDisplay().getRotation();
@@ -193,6 +197,38 @@ public class CameraService implements CameraContract{
         final File dir = context.getExternalFilesDir(null);
         return (dir == null ? "" : (dir.getAbsolutePath() + "/"))
                 + System.currentTimeMillis() + ".mp4";
+    }
+
+    private Rect calculateVideoArea() {
+
+        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+        int screenWidth = metrics.widthPixels;
+        int screenHeight = metrics.heightPixels;
+
+        CamcorderProfile profile = CamcorderProfile.get(CamcorderProfile.QUALITY_HIGH);
+
+        double widthScale = 0, heightScale = 0;
+        if (profile.videoFrameWidth != 0)
+            widthScale = (double) screenWidth
+                    / (double) profile.videoFrameWidth;
+        if (profile.videoFrameHeight != 0)
+            heightScale = (double) screenHeight
+                    / (double) profile.videoFrameHeight;
+
+        double scale = Math.min(widthScale, heightScale);
+
+        int width = (int) (profile.videoFrameWidth * scale);
+        int height = (int) (profile.videoFrameHeight * scale);
+        int offsetY = (screenHeight - height) / 2;
+        int offsetX = (screenWidth - width) / 2;
+
+        Rect r = new Rect(offsetX, offsetY, width + offsetX, height + offsetY);
+        return r;
+    }
+
+    @Override
+    public Rect getVideoArea() {
+        return mVideoArea;
     }
 
     private void releaseMediaRecorder(){
