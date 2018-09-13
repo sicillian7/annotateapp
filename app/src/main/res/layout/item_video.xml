@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="20dp"
+    android:shadowColor="#000"
+    android:shadowDx="0"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    android:shadowDy="30"
+    android:shadowRadius="50">
+
+
+    <!--<FrameLayout-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content">-->
+
+    <!--<com.yinglan.shadowimageview.ShadowImageView-->
+    <!--android:id="@+id/ivVideoImage"-->
+    <!--android:layout_width="200dp"-->
+    <!--android:layout_height="113dp"-->
+
+    <!--android:layout_centerInParent="true"-->
+    <!--android:contentDescription="TODO"-->
+    <!--app:shadowColor="@android:color/black"-->
+    <!--app:shadowRound="1dp"-->
+    <!--app:shadowSrc="@drawable/list_test" />-->
+
+    <!--<ImageView
+        android:background="@android:color/transparent"
+        android:id="@+id/ivVideoImage"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:contentDescription="TODO"
+        android:scaleType="centerCrop"
+        tools:src="@drawable/list_test" />-->
+
+    <!--<FrameLayout
+        android:layout_width="140dp"
+        android:layout_height="match_parent"
+        android:elevation="5dp"
+        android:background="@drawable/rounded_layout_shape"></FrameLayout>-->
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clipToPadding="false"
+        android:clipChildren="false"
+        card_view:cardPreventCornerOverlap="false"
+        card_view:cardElevation="10dp"
+        android:layout_margin="5dp"
+        android:layout_gravity="center"
+        card_view:cardCornerRadius="5dp">
+        <ImageView
+            android:background="@android:color/transparent"
+            android:id="@+id/ivVideoImage"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+
+            android:adjustViewBounds="true"
+            android:contentDescription="TODO"
+            android:scaleType="centerCrop"
+            tools:src="@drawable/list_test" />
+
+        <ImageView
+            android:id="@+id/ivPlayBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:contentDescription="TODO"
+            tools:src="@drawable/ic_btn_rec" />
+        <!--</FrameLayout>-->
+    </android.support.v7.widget.CardView>
+
+    <LinearLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvVideoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            tools:text="Some Title" />
+
+        <LinearLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvVideoDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="20dp"
+                tools:text="15 August 2018 | " />
+
+            <TextView
+                android:id="@+id/tvVideoHour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                tools:text="20:35" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
