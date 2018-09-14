@@ -12,7 +12,6 @@ import android.widget.TextView;
 import com.interworks.inspektar.R;
 import com.interworks.inspektar.utils.ImageUtils;
 import com.squareup.picasso.Picasso;
-import com.yinglan.shadowimageview.ShadowImageView;
 
 import java.util.List;
 
@@ -36,10 +35,10 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom layout
-        View contactView = inflater.inflate(R.layout.item_video, parent, false);
+        View view = inflater.inflate(R.layout.item_video, parent, false);
 
         // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(contactView);
+        ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
     }
 
@@ -50,26 +49,36 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.ViewHolder> {
 
         VideoListTestData testData = mTestData.get(position);
 
-        ImageView ivVideo = holder.ivVideoImage;
-        ivVideo.setImageResource(testData.getImage());
 
-        /*Picasso.get()
-                .load(testData.getImage())
-                .transform(new ImageUtils(150, 0))
-                .into(ivVideo);*/
+        ViewHolder viewHolder = holder;
+        viewHolder.setIsRecyclable(false);
+        viewHolder.tvVideoTitle.setText(testData.getTitle());
+        viewHolder.tvVideoDate.setText(testData.getDate());
+        viewHolder.tvVideoHour.setText(testData.getHour());
+        viewHolder.ivVideoImage.setImageResource(testData.getImage());
+        viewHolder.ivPlayBtn.setImageResource(R.drawable.ic_btn_rec);
 
 
-        TextView tvTitle = holder.tvVideoTitle;
-        tvTitle.setText(testData.getTitle());
-
-        TextView tvDate = holder.tvVideoDate;
-        tvDate.setText(testData.getDate());
-
-        TextView tvHour = holder.tvVideoHour;
-        tvHour.setText(testData.getHour());
-
-        ImageView ivPlay = holder.ivPlayBtn;
-        ivPlay.setImageResource(R.drawable.ic_btn_rec);
+//        ImageView ivVideo = holder.ivVideoImage;
+//        ivVideo.setImageResource(testData.getImage());
+//
+//        /*Picasso.get()
+//                .load(testData.getImage())
+//                .transform(new ImageUtils(150, 0))
+//                .into(ivVideo);*/
+//
+//
+//        TextView tvTitle = holder.tvVideoTitle;
+//        tvTitle.setText(testData.getTitle());
+//
+//        TextView tvDate = holder.tvVideoDate;
+//        tvDate.setText(testData.getDate());
+//
+//        TextView tvHour = holder.tvVideoHour;
+//        tvHour.setText(testData.getHour());
+//
+//        ImageView ivPlay = holder.ivPlayBtn;
+//        ivPlay.setImageResource(R.drawable.ic_btn_rec);
 
     }
 

@@ -29,7 +29,6 @@ dependencies {
 
     def lifecycle_version = "1.1.1"
 
-
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support:appcompat-v7:28.0.0-rc01'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
@@ -55,7 +54,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
 
     //image rounding and shadow
-    implementation 'com.yinglan.shadowimageview:shadowimageview:1.0.4'
+    //implementation 'com.yinglan.shadowimageview:shadowimageview:1.0.4'
 
     implementation 'com.android.support:cardview-v7:27.1.1'
 
