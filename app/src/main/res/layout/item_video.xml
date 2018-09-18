@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@android:color/white"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:orientation="horizontal"
     android:padding="15dp"
-    android:background="@android:color/white"
     android:shadowColor="#000"
     android:shadowDx="0"
     android:shadowDy="30"
@@ -53,18 +53,7 @@
         android:layout_gravity="center"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvVideoTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="20dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textStyle="bold"
-            tools:text="Some Title" />
-
         <LinearLayout
-
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -83,7 +72,16 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 tools:text="20:35" />
-
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvVideoTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textStyle="bold"
+            tools:text="Some Title" />
     </LinearLayout>
 </LinearLayout>

@@ -2,6 +2,7 @@ package com.interworks.inspektar.home;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,6 +31,10 @@ public class HomeActivity extends AppCompatActivity{
         mTopToolbar = findViewById(R.id.toolbarTop);
         setSupportActionBar(mTopToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
+        BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationView);
+
 
 
         RecyclerView rvTestVideos = findViewById(R.id.rvVideoList);

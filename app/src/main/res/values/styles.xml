@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/action_bar_gray</item>
         <item name="colorPrimaryDark">@color/action_bar_gray</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorControlHighlight">@color/rippleColor</item>
     </style>
 
 </resources>

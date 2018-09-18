@@ -9,4 +9,9 @@
     <!-- message for the dialog showing the camera is disabled because of security policies. Camera cannot be used. -->
     <string name="camera_disabled">Camera has been disabled because of security policies.</string>
     <string name="title_home_screen">Videos</string>
+    <string name="search">SEARCH</string>
+    <string name="import_video">IMPORT</string>
+    <string name="add_new_video">ADD NEW VIDEO</string>
+    <string name="export">EXPORT</string>
+    <string name="annotations">ANNOTATIONS</string>
 </resources>

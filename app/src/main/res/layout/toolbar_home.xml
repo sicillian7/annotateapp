@@ -19,7 +19,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Videos"
+        android:text="Video Inspectar"
+        android:textStyle="bold"
         android:textColor="@android:color/black" />
 
 
