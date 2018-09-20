@@ -1,29 +1,34 @@
 package com.interworks.inspektar;
 
+
+import android.app.Activity;
 import android.app.Application;
 
-import com.interworks.inspektar.di.components.ApplicationComponent;
 import com.interworks.inspektar.di.components.DaggerApplicationComponent;
-import com.interworks.inspektar.di.modules.ApplicationModule;
 
-public class InspektARApplication extends Application {
+import javax.inject.Inject;
 
-    private ApplicationComponent mApplicationComponent;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasActivityInjector;
+
+public class InspektARApplication extends Application implements HasActivityInjector{
+
+    @Inject
+    DispatchingAndroidInjector<Activity> activityDispatchingAndroidInjector;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        initApplicationComponent();
+        DaggerApplicationComponent
+                .builder()
+                .application(this)
+                .build()
+                .inject(this);
+
     }
 
-    public ApplicationComponent getApplicationComponent() {
-        return mApplicationComponent;
-    }
-
-    private void initApplicationComponent(){
-
-        mApplicationComponent = DaggerApplicationComponent.builder()
-                .applicationModule(new ApplicationModule(this))
-                .build();
+    @Override
+    public DispatchingAndroidInjector<Activity> activityInjector() {
+        return activityDispatchingAndroidInjector;
     }
 }

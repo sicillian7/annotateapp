@@ -52,7 +52,7 @@ public abstract class IWPopupWindow extends PopupWindow {
         this.context = context;
     }
 
-    protected void unbindViews(){
+    public void unbindViews(){
         unbinder.unbind();
     }
 }

@@ -3,6 +3,8 @@ package com.interworks.inspektar.camera.view;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Dialog;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -25,9 +27,11 @@ import android.widget.Toast;
 import com.interworks.inspektar.R;
 import com.interworks.inspektar.annotations.view.AnnotationGridDialog;
 import com.interworks.inspektar.annotations.viewModel.AnnotationViewModel;
+import com.interworks.inspektar.base.BaseFragment;
+import com.interworks.inspektar.base.BaseViewModel;
 import com.interworks.inspektar.base.ViewModelFactory;
 import com.interworks.inspektar.camera.CameraContract;
-import com.interworks.inspektar.camera.CameraService;
+import com.interworks.inspektar.camera.viewModel.CameraViewModel;
 
 import java.lang.ref.WeakReference;
 
@@ -37,8 +41,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
+import dagger.android.support.DaggerFragment;
 
-public class RecordVideoFragment extends Fragment {
+public class RecordVideoFragment extends DaggerFragment {
 
     private static final String TAG = RecordVideoFragment.class.getName();
     private static final int REQUEST_VIDEO_PERMISSIONS = 1;
@@ -54,7 +59,7 @@ public class RecordVideoFragment extends Fragment {
     CameraContract mCameraService;
     Unbinder unbinder;
     @Inject
-    Activity mActivity;
+    CameraActivity mActivity;
     private boolean isRecording;
     @BindView(R.id.btnRecord)
     ImageButton mButtonVideo;
@@ -62,8 +67,10 @@ public class RecordVideoFragment extends Fragment {
     FrameLayout mCameraPreview;
     @Inject
     AnnotationGridDialog keywordsDialog;
-//    @Inject
-//    ViewModelFactory mFactory;
+    @Inject
+    ViewModelFactory mFactory;
+
+    private CameraViewModel mCameraViewModel;
 
     public RecordVideoFragment() {
     }
@@ -71,7 +78,6 @@ public class RecordVideoFragment extends Fragment {
     public static RecordVideoFragment newInstance(){
         return new RecordVideoFragment();
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,7 +97,10 @@ public class RecordVideoFragment extends Fragment {
         if (mActivity.isFinishing()) {
             return;
         }
-        mCameraPreview.addView(mCameraService.appendCameraPreview());
+
+        mCameraViewModel = ViewModelProviders.of(this, mFactory).get(CameraViewModel.class);
+      //  mCameraPreview.addView(mCameraService.appendCameraPreview());
+        mCameraPreview.addView(mCameraService.appendTexture());
         mCameraPreview.setOnTouchListener(new OnTouchListener(this));
         keywordsDialog.setListener(new KeywordsDialogActionListener(this));
     }
@@ -103,8 +112,20 @@ public class RecordVideoFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onPause() {
+        super.onPause();
+        if (mCameraService != null) {
+            mCameraService.releaseCamera();
+            mCameraService.stopBackgroundThread();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mCameraService != null) {
+           mCameraService.prepareCamera();
+        }
     }
 
     @OnClick(R.id.btnRecord)
@@ -127,17 +148,11 @@ public class RecordVideoFragment extends Fragment {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        Log.v(TAG, "onConfigurationChanged");
-        if (mCameraService != null) {
-            mCameraService.setDisplayOrientation();
-        }
-    }
-
-    @Override
     public void onDestroyView() {
         unbinder.unbind();
+        if (keywordsDialog != null) {
+            keywordsDialog.unbindViews();
+        }
         super.onDestroyView();
     }
 
@@ -248,7 +263,7 @@ public class RecordVideoFragment extends Fragment {
         public boolean onTouch(View view, MotionEvent motionEvent) {
             RecordVideoFragment frag = weakFrag.get();
             if(motionEvent.getAction() == MotionEvent.ACTION_DOWN && frag != null){
-                AnnotationViewModel m = new AnnotationViewModel(motionEvent.getX(), motionEvent.getY(), frag.mCameraService.getVideoArea());
+                AnnotationViewModel m = new AnnotationViewModel(motionEvent.getX(), motionEvent.getY(), frag.mCameraService.appendTexture());
                 frag.displayKeywordsDialog(m, motionEvent.getX(), motionEvent.getY());
             }else{
                 return false;

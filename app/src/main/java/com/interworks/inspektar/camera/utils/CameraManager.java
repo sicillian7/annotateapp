@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.interworks.inspektar.camera;
+package com.interworks.inspektar.camera.utils;
 
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;

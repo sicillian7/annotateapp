@@ -1,4 +1,4 @@
-package com.interworks.inspektar.camera;
+package com.interworks.inspektar.camera.utils;
 
 import android.app.Activity;
 import android.content.ContentResolver;

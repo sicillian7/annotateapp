@@ -1,5 +1,6 @@
 package com.interworks.inspektar.annotations.view;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -12,6 +13,7 @@ import com.interworks.inspektar.R;
 import com.interworks.inspektar.annotations.adapter.KeywordsAdapter;
 import com.interworks.inspektar.annotations.viewModel.AnnotationViewModel;
 import com.interworks.inspektar.base.IWPopupWindow;
+import com.interworks.inspektar.base.ViewModelFactory;
 
 import java.lang.ref.WeakReference;
 
@@ -86,7 +88,7 @@ public class AnnotationGridDialog extends IWPopupWindow implements
 
     @Override
     public void dismiss() {
-        unbindViews();
+        //unbindViews();
         super.dismiss();
     }
 
@@ -102,6 +104,7 @@ public class AnnotationGridDialog extends IWPopupWindow implements
         setPosX(posX);
         setPosY(posY);
     }
+
 
     public void onKeywordSelected(KeywordEntity item){
         if (mListener != null) {

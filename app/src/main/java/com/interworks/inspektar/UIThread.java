@@ -1,7 +1,5 @@
 package com.interworks.inspektar;
 
-import com.interworks.inspektar.di.scopes.ApplicationScope;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 

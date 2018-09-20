@@ -10,13 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="50dp"
+            android:clickable="true">
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -41,7 +41,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:clickable="true">
                 <ImageButton
                     android:id="@+id/btnRecord"
                     style="android:imageButtonStyle"
