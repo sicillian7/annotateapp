@@ -16,5 +16,6 @@
 
     <dimen name="design_bottom_navigation_text_size" tools:override="true">9sp</dimen>
     <dimen name="design_bottom_navigation_active_text_size" tools:override="true">9sp</dimen>
+    <!--<dimen name="design_fab_image_size" tools:override="true">56dp</dimen>-->
 
 </resources>

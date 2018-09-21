@@ -1,10 +1,16 @@
 package com.interworks.inspektar.home;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.support.design.internal.BottomNavigationItemView;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import java.lang.reflect.Field;
 
@@ -35,5 +41,24 @@ public class BottomNavigationViewHelper {
         }
     }
 
+
+    public static void highlightSelectedItem(BottomNavigationMenuView menuView, Context context, int itemId){
+        for (int i = 0; i < menuView.getChildCount(); i++) {
+            final View iconView = menuView.getChildAt(i).findViewById(android.support.design.R.id.icon);
+            final ViewGroup.LayoutParams layoutParams = iconView.getLayoutParams();
+            final DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+            layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, displayMetrics);
+            layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, displayMetrics);
+            iconView.setLayoutParams(layoutParams);
+        }
+
+        final View iconView = menuView.getChildAt(itemId).findViewById(android.support.design.R.id.icon);
+        final ViewGroup.LayoutParams layoutParams = iconView.getLayoutParams();
+        final DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32, displayMetrics);
+        layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 32, displayMetrics);
+        iconView.setLayoutParams(layoutParams);
+
+    }
 
 }

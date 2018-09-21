@@ -4,31 +4,30 @@
     <item
         android:id="@+id/action_search"
         android:enabled="true"
-        android:icon="@drawable/ic_test_image_24dp"
+        android:icon="@drawable/ic_search_black_24dp"
         android:title="@string/search"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_import"
         android:enabled="true"
-        android:icon="@drawable/ic_test_image_24dp"
+        android:icon="@drawable/ic_file_download_black_24dp"
         android:title="@string/import_video"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_add_new_video"
         android:enabled="true"
-        android:icon="@drawable/ic_test_image_24dp"
         android:title="@string/add_new_video"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_export"
         android:enabled="true"
-        android:icon="@drawable/ic_test_image_24dp"
+        android:icon="@drawable/ic_file_upload_black_24dp"
         android:title="@string/export"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_annotations"
         android:enabled="true"
-        android:icon="@drawable/ic_test_image_24dp"
+        android:icon="@drawable/ic_message_black_24dp"
         android:title="@string/annotations"
         app:showAsAction="ifRoom" />
 </menu>

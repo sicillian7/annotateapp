@@ -5,6 +5,9 @@
     <color name="colorAccent">#FF4081</color>
     <color name="darker_gray">#616161</color>
     <color name="white">#FFFF</color>
-    <color name="action_bar_gray">#d4d4d4</color>
-    <color name="rippleColor">#85bd4ef9</color>
+    <color name="action_bar_gray">#f9f9f9</color>
+    <color name="rippleColor">#85a4a4a4</color>
+    <color name="blue_text">#4cafd6</color>
+    <color name="navigation_bar">#eaeaea</color>
+    <color name="black">#000000</color>
 </resources>
