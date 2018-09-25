@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:orientation="horizontal"
+    android:padding="15dp"
+    android:shadowColor="#000"
+    android:shadowDx="0"
+    android:shadowDy="30"
+    android:shadowRadius="50">
+
+
+    <ImageView
+        android:id="@+id/ivFolder"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_margin="5dp"
+        android:layout_weight="0"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:srcCompat="@drawable/ic_folder_black_24dp" />
+
+    <TextView
+        android:id="@+id/tvFolderTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="20dp"
+        android:layout_weight="1"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textStyle="bold"
+        tools:text="Houses in East Part" />
+
+    <ImageView
+        android:id="@+id/ivArrow"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center"
+        android:layout_margin="5dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:srcCompat="@drawable/ic_keyboard_arrow_right_black_24dp" />
+
+</LinearLayout>
