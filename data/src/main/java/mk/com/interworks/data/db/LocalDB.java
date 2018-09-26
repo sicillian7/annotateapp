@@ -10,6 +10,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import mk.com.interworks.data.dao.AnnotationDAO;
+import mk.com.interworks.data.dao.FavoritesDAO;
 import mk.com.interworks.data.dao.KeywordsDAO;
 import mk.com.interworks.data.dao.VideoDAO;
 import mk.com.interworks.domain.model.AnnotationEntity;
@@ -28,4 +29,5 @@ public abstract class LocalDB extends RoomDatabase {
     public abstract VideoDAO videoDAO();
     public abstract AnnotationDAO annotationDAO();
     public abstract KeywordsDAO keywordsDAO();
+    public abstract FavoritesDAO favoritesDAO();
 }

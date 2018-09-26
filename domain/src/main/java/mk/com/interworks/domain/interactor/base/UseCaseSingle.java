@@ -27,5 +27,11 @@ public abstract class UseCaseSingle<T, Params> extends UseCase<T, Params> {
         addDisposable(observable.subscribeWith(observer));
     }
 
+    public Single<T> getObservableUsecase(Params params){
+        return this.buildUseCaseSingle(params).subscribeOn(Schedulers.from(threadExecutor))
+                .observeOn(postExecutionThread.getScheduler());
+    }
+
     protected abstract Single<T> buildUseCaseSingle(Params params);
+
 }

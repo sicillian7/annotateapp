@@ -29,15 +29,6 @@ public class RecordVideoFragmentModule {
         return new LinearLayoutManager(c);
     }
 
-    @Provides
-    Camera providesCamera(){
-        return Camera.open();
-    }
-
-    @Provides
-    CameraPreview providesCameraPreview(CameraActivity act, Camera camera){
-        return new CameraPreview(act, camera);
-    }
 
     @Provides
     OrientationManager providesOrientationMannager(CameraActivity act){
@@ -55,7 +46,7 @@ public class RecordVideoFragmentModule {
     }
 
     @Provides
-    CameraContract providesCameraService(CameraActivity act, Camera cam, CameraPreview camPreview, OrientationManager orientationManager){
+    CameraContract providesCameraService(CameraActivity act, OrientationManager orientationManager){
 //        CameraService service = new CameraService(act);
 //        service.setup(cam, camPreview, orientationManager);
 //        return service;

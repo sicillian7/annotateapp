@@ -1,7 +1,6 @@
 package com.interworks.inspektar.camera.viewModel;
-
-import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
 
 import com.interworks.inspektar.base.BaseViewModel;
 
@@ -13,26 +12,43 @@ import javax.inject.Inject;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import mk.com.interworks.domain.interactor.keywordUseCases.GetKeywordsForCategoryUseCaseSingle;
-import mk.com.interworks.domain.model.AnnotationEntity;
-import mk.com.interworks.domain.model.CategoryEntity;
+import mk.com.interworks.domain.interactor.favoriteUseCases.GetAllFavoritesUseCaseSingle;
+import mk.com.interworks.domain.interactor.keywordUseCases.GetKeywordsForFavoriteUseCaseSingle;
+import mk.com.interworks.domain.model.FavoriteEntity;
 import mk.com.interworks.domain.model.KeywordEntity;
+import timber.log.Timber;
 
-public class CameraViewModel extends BaseViewModel implements LifecycleObserver {
+public class CameraViewModel extends BaseViewModel{
+
+    private static final String TAG = CameraViewModel.class.getName();
 
     private CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private List<KeywordEntity> mKeywords;
-    private GetKeywordsForCategoryUseCaseSingle mGetKeywordsForCategoryUseCase;
+    private GetAllFavoritesUseCaseSingle mGetAllFavoritesUseCaseSingle;
+    private GetKeywordsForFavoriteUseCaseSingle mGetKeywordsForFavoriteUseCase;
 
     @Inject
-    public CameraViewModel(GetKeywordsForCategoryUseCaseSingle mGetKeywordsForCategoryUseCase) {
-        this.mGetKeywordsForCategoryUseCase = mGetKeywordsForCategoryUseCase;
+    public CameraViewModel(GetKeywordsForFavoriteUseCaseSingle getKeywordsForFavoriteUseCase, GetAllFavoritesUseCaseSingle getAllFavoritesUseCaseSingle) {
+        this.mGetKeywordsForFavoriteUseCase = getKeywordsForFavoriteUseCase;
+        this.mGetAllFavoritesUseCaseSingle = getAllFavoritesUseCaseSingle;
         init();
-
     }
 
     private void init(){
-
+       mGetAllFavoritesUseCaseSingle.getObservableUsecase(null).flatMap(lsFavorites -> {
+           if(lsFavorites.size() > 0){
+               long id = 0;
+               for (FavoriteEntity item : lsFavorites) {
+                   if(item.isSelected()){
+                       id = item.getId();
+                   }
+               }
+               return mGetKeywordsForFavoriteUseCase.getObservableUsecase(new GetKeywordsForFavoriteUseCaseSingle.Params(id));
+           }else{
+               return mGetKeywordsForFavoriteUseCase.getObservableUsecase(new GetKeywordsForFavoriteUseCaseSingle.Params(0));
+           }
+       })
+       .subscribeWith(new KeywordsObserver(this));
     }
 
     @Override
@@ -64,7 +80,7 @@ public class CameraViewModel extends BaseViewModel implements LifecycleObserver 
 
         @Override
         public void onError(Throwable e) {
-
+            Timber.d("error retrieving keywords for favorite");
         }
     }
 }

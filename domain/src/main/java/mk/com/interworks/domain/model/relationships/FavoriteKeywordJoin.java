@@ -20,8 +20,7 @@ import mk.com.interworks.domain.model.KeywordEntity;
                         onDelete = ForeignKey.CASCADE),
                 @ForeignKey(entity = KeywordEntity.class,
                         parentColumns = BaseEntity.ID,
-                        childColumns = FavoriteKeywordJoin.KEYWORD_ID,
-                        onDelete = ForeignKey.CASCADE)
+                        childColumns = FavoriteKeywordJoin.KEYWORD_ID)
         })
 public class FavoriteKeywordJoin {
 
