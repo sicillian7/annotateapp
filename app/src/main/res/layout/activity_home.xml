@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/toolbarTop"
+            layout="@layout/toolbar_home"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!--<android.support.v7.widget.RecyclerView
+            android:id="@+id/rvVideoList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:background="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbarTop"
+            tools:listitem="@layout/item_video" />-->
+
+        <include
+            layout="@layout/content_main"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:background="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbarTop" />
+
+
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/bottom_navigation_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:layout_margin="0dp"
+            android:background="@drawable/ripple_bottom_nav"
+            android:elevation="8dp"
+            app:itemIconTint="@color/nav_item_color_state"
+            app:itemTextColor="@color/nav_item_color_state"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvVideoList"
+            app:menu="@menu/bottom_navigation_main">
+
+
+        </android.support.design.widget.BottomNavigationView>
+
+        <Button
+            android:id="@+id/button2"
+
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/gradient_button"
+            android:elevation="8dp"
+            android:stateListAnimator="@null"
+            android:text="+"
+            android:textColor="@color/white"
+            android:textSize="40sp"
+            android:translationZ="8dp"
+            app:layout_anchor="@+id/rvVideoList"
+            app:layout_anchorGravity="bottom|center" />
+
+        <!--<android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
+            app:elevation="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:layout_marginBottom="20dp"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:src="@android:drawable/ic_popup_disk_full"
+            app:layout_anchor="@+id/bottom_navigation_view"
+            app:layout_anchorGravity="top|center" />-->
+    </android.support.design.widget.CoordinatorLayout>
+</android.support.constraint.ConstraintLayout>

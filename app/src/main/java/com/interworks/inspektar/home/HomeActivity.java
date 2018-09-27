@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,10 +25,15 @@ import com.interworks.inspektar.base.BaseActivity;
 
 import java.util.ArrayList;
 
-public class HomeActivity extends AppCompatActivity{
+public class HomeActivity extends BaseActivity{
 
     private ArrayList<VideoListTestData> videoList;
     private Toolbar mTopToolbar;
+
+    final Fragment homeFragment = new HomeFragment();
+
+    final FragmentManager fm = getSupportFragmentManager();
+    Fragment active = homeFragment;
 
     FloatingActionButton fab;
 
@@ -38,7 +45,7 @@ public class HomeActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
 
         mTopToolbar = findViewById(R.id.toolbarTop);
         setSupportActionBar(mTopToolbar);
@@ -47,6 +54,9 @@ public class HomeActivity extends AppCompatActivity{
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation_view);
         BottomNavigationViewHelper.setupBottomNavigationView(bottomNavigationView);
 
+        fm.beginTransaction().add(R.id.main_container,homeFragment, "1").commit();
+
+        //region Description
         //BottomNavigationViewHelper.highlightSelectedItem((BottomNavigationMenuView)bottomNavigationView.getChildAt(0),HomeActivity.this);
 
         /*bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -73,11 +83,14 @@ public class HomeActivity extends AppCompatActivity{
                 return false;
             }
         });*/
+        //endregion
 
 
 
 
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottomNavigationView.getChildAt(0);
+
+        //region Description
         //BottomNavigationMenuView menuView = (BottomNavigationMenuView) findViewById(R.id.bottom_navigation_view);
 
         /*for (int i = 0; i < menuView.getChildCount(); i++) {
@@ -98,14 +111,20 @@ public class HomeActivity extends AppCompatActivity{
                 bottomNavigationView.setSelectedItemId(R.id.action_add_new_video);
             }
         });*/
+        //endregion
 
-        RecyclerView rvTestVideos = findViewById(R.id.rvVideoList);
+        /*RecyclerView rvTestVideos = findViewById(R.id.rvVideoList);
 
         videoList = VideoListTestData.createTestVideoList(20);
 
         HomeAdapter adapter = new HomeAdapter(videoList);
         rvTestVideos.setAdapter(adapter);
-        rvTestVideos.setLayoutManager(new LinearLayoutManager(this));
+        rvTestVideos.setLayoutManager(new LinearLayoutManager(this));*/
 
+    }
+
+    @Override
+    protected int getContentView() {
+        return R.layout.activity_home;
     }
 }
