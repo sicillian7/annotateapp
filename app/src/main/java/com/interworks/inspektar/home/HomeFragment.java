@@ -15,11 +15,12 @@ import android.view.ViewGroup;
 import com.interworks.inspektar.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HomeFragment extends Fragment{
 
     private ItemTouchHelper mItemTouchHelper;
-    private ArrayList<VideoListTestData> videoList;
+    private List<VideoListTestData> videoList;
 
 
 
@@ -34,14 +35,14 @@ public class HomeFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
 
-        RecyclerView rvTestVideos = view.findViewById(R.id.rvVideoList);
+        /*RecyclerView rvTestVideos = view.findViewById(R.id.rvVideoList);
 
         videoList = VideoListTestData.createTestVideoList(20);
 
         HomeAdapter adapter = new HomeAdapter(videoList);
         rvTestVideos.setAdapter(adapter);
         rvTestVideos.setLayoutManager(new LinearLayoutManager(getActivity()));
-
+*/
         return view;
 
     }
@@ -49,5 +50,18 @@ public class HomeFragment extends Fragment{
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        RecyclerView recyclerView = view.findViewById(R.id.rvVideoList);
+
+        videoList = VideoListTestData.createTestVideoList(20);
+
+        HomeAdapter adapter = new HomeAdapter(videoList);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
+        ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(adapter);
+        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper.attachToRecyclerView(recyclerView);
     }
 }

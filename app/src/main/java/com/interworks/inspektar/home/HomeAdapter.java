@@ -17,7 +17,7 @@ import java.util.List;
 
 import static java.security.AccessController.getContext;
 
-public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements ItemTouchHelperAdapter {
 
 
     private List<VideoListTestData> mTestData;
@@ -33,13 +33,12 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-
         context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view;
 
-        switch (viewType){
+        switch (viewType) {
             case R.layout.item_video:
                 view = inflater.inflate(R.layout.item_video, parent, false);
                 return new VideosHolder(view);
@@ -49,73 +48,26 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         }
         return null;
-
-
-
-        /*Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-
-        // Inflate the custom layout
-        View view = inflater.inflate(R.layout.item_video, parent, false);
-
-        // Return a new holder instance
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;*/
-
-
-
-        /*if(viewType == 2)
-        {
-            view = inflater.inflate(R.layout.item_video, parent, false);
-        }
-        else
-        {
-            view = inflater.inflate(R.layout.item_folder, parent, false);
-        }*/
-
-
-
-        //return null;
-
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-        //Context context = holder.itemView.getContext();
-
         VideoListTestData testData = mTestData.get(position);
 
         if (testData != null) {
 
-            if(holder instanceof VideosHolder)
-            {
-                ((VideosHolder)holder).tvVideoTitle.setText(testData.getTitle());
-                ((VideosHolder)holder).tvVideoDate.setText(testData.getDate());
-                ((VideosHolder)holder).tvVideoHour.setText(testData.getHour());
-                ((VideosHolder)holder).ivVideoImage.setImageResource(testData.getImage());
-                ((VideosHolder)holder).ivPlayBtn.setImageResource(R.drawable.ic_btn_rec);
+            if (holder instanceof VideosHolder) {
+                ((VideosHolder) holder).tvVideoTitle.setText(testData.getTitle());
+                ((VideosHolder) holder).tvVideoDate.setText(testData.getDate());
+                ((VideosHolder) holder).tvVideoHour.setText(testData.getHour());
+                ((VideosHolder) holder).ivVideoImage.setImageResource(testData.getImage());
+                ((VideosHolder) holder).ivPlayBtn.setImageResource(R.drawable.ic_btn_rec);
+            } else if (holder instanceof FolderHolder) {
+                ((FolderHolder) holder).ivFolder.setImageResource(R.drawable.ic_folder_black_24dp);
+                ((FolderHolder) holder).tvFolderTitle.setText(testData.getTitle());
+                ((FolderHolder) holder).ivArrow.setImageResource(R.drawable.ic_keyboard_arrow_right_black_24dp);
             }
-            else if (holder instanceof FolderHolder)
-            {
-                ((FolderHolder)holder).ivFolder.setImageResource(R.drawable.ic_folder_black_24dp);
-                ((FolderHolder)holder).tvFolderTitle.setText(testData.getTitle());
-                ((FolderHolder)holder).ivArrow.setImageResource(R.drawable.ic_keyboard_arrow_right_black_24dp);
-            }
-
-            /*if (testData.getFolder()) {
-
-            }
-            else{
-                VideosHolder viewHolder = (VideosHolder) holder;
-                viewHolder.setIsRecyclable(false);
-                viewHolder.tvVideoTitle.setText(testData.getTitle());
-                viewHolder.tvVideoDate.setText(testData.getDate());
-                viewHolder.tvVideoHour.setText(testData.getHour());
-                viewHolder.ivVideoImage.setImageResource(testData.getImage());
-                viewHolder.ivPlayBtn.setImageResource(R.drawable.ic_btn_rec);
-            }*/
-
         }
 
     }
@@ -125,14 +77,12 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (mTestData != null) {
             VideoListTestData object = mTestData.get(position);
             if (object != null) {
-                if(object.getFolder())
-                {
+                if (object.getFolder()) {
                     return R.layout.item_folder;
                     //return 1;
-                }
-                else
+                } else
                     return R.layout.item_video;
-                    //return 2;
+                //return 2;
             }
         }
         return 0;
@@ -140,9 +90,30 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public int getItemCount() {
-        if(mTestData == null)
+        if (mTestData == null)
             return 0;
         return mTestData.size();
+    }
+
+    @Override
+    public void onItemMove(int fromPosition, int toPosition) {
+
+        VideoListTestData targetUser = mTestData.get(fromPosition);
+        VideoListTestData user = new VideoListTestData(targetUser);
+        mTestData.remove(fromPosition);
+        mTestData.add(toPosition, user);
+        notifyItemMoved(fromPosition, toPosition);
+
+
+        /*VideoListTestData prev = mTestData.remove(fromPosition);
+        mTestData.add(toPosition > fromPosition ? toPosition - 1 : toPosition, prev);
+        notifyItemMoved(fromPosition, toPosition);*/
+    }
+
+    @Override
+    public void onItemDismiss(int position) {
+        /*mTestData.remove(position);
+        notifyItemRemoved(position);*/
     }
 
     public class VideosHolder extends RecyclerView.ViewHolder {
@@ -161,8 +132,6 @@ public class HomeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             tvVideoTitle = itemView.findViewById(R.id.tvVideoTitle);
             tvVideoDate = itemView.findViewById(R.id.tvVideoDate);
             tvVideoHour = itemView.findViewById(R.id.tvVideoHour);
-
-
         }
     }
 

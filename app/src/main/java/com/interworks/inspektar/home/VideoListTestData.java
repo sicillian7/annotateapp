@@ -24,6 +24,14 @@ public class VideoListTestData {
         mFolder = folder;
     }
 
+    public VideoListTestData(VideoListTestData video) {
+        mTitle = video.mTitle;
+        mDate = video.mDate;
+        mHour = video.mHour;
+        mImage = video.mImage;
+        mFolder = video.mFolder;
+    }
+
     public int getImage() {
         return mImage;
     }

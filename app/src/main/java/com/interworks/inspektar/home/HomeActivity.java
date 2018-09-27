@@ -37,11 +37,6 @@ public class HomeActivity extends BaseActivity{
 
     FloatingActionButton fab;
 
-    /*@Override
-    protected int getContentView() {
-        return R.layout.activity_main;
-    }*/
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,71 +51,9 @@ public class HomeActivity extends BaseActivity{
 
         fm.beginTransaction().add(R.id.main_container,homeFragment, "1").commit();
 
-        //region Description
-        //BottomNavigationViewHelper.highlightSelectedItem((BottomNavigationMenuView)bottomNavigationView.getChildAt(0),HomeActivity.this);
-
-        /*bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_search:
-                        BottomNavigationViewHelper.highlightSelectedItem((BottomNavigationMenuView) bottomNavigationView.getChildAt(0),HomeActivity.this, 0);
-                        break;
-                    case R.id.action_import:
-                        // open fragment 2
-                        BottomNavigationViewHelper.highlightSelectedItem((BottomNavigationMenuView)bottomNavigationView.getChildAt(0),HomeActivity.this, 1);
-                        break;
-                    case R.id.action_add_new_video:
-                        BottomNavigationViewHelper.highlightSelectedItem((BottomNavigationMenuView)bottomNavigationView.getChildAt(0),HomeActivity.this, 2);
-                        break;
-                    case R.id.action_export:
-                        BottomNavigationViewHelper.highlightSelectedItem((BottomNavigationMenuView)bottomNavigationView.getChildAt(0),HomeActivity.this, 3);
-                        break;
-                    case R.id.action_favorite:
-                        BottomNavigationViewHelper.highlightSelectedItem((BottomNavigationMenuView)bottomNavigationView.getChildAt(0),HomeActivity.this, 4);
-                        break;
-                }
-                return false;
-            }
-        });*/
-        //endregion
-
-
 
 
         BottomNavigationMenuView menuView = (BottomNavigationMenuView) bottomNavigationView.getChildAt(0);
-
-        //region Description
-        //BottomNavigationMenuView menuView = (BottomNavigationMenuView) findViewById(R.id.bottom_navigation_view);
-
-        /*for (int i = 0; i < menuView.getChildCount(); i++) {
-            final View iconView = menuView.getChildAt(i).findViewById(android.support.design.R.id.icon);
-            final ViewGroup.LayoutParams layoutParams = iconView.getLayoutParams();
-            final DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-            layoutParams.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, displayMetrics);
-            layoutParams.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, displayMetrics);
-            iconView.setLayoutParams(layoutParams);
-        }*/
-
-
-        /*fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(HomeActivity.this, "FAB CLICKED", Toast.LENGTH_SHORT).show();
-                bottomNavigationView.setSelectedItemId(R.id.action_add_new_video);
-            }
-        });*/
-        //endregion
-
-        /*RecyclerView rvTestVideos = findViewById(R.id.rvVideoList);
-
-        videoList = VideoListTestData.createTestVideoList(20);
-
-        HomeAdapter adapter = new HomeAdapter(videoList);
-        rvTestVideos.setAdapter(adapter);
-        rvTestVideos.setLayoutManager(new LinearLayoutManager(this));*/
-
     }
 
     @Override
