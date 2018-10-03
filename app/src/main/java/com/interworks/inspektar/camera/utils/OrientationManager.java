@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 
+@Deprecated
 public class OrientationManager {
     private static final String TAG = "CAM_OrientationManager";
     public static final boolean HAS_ORIENTATION_LOCK =

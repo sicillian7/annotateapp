@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -37,6 +38,7 @@ import com.interworks.inspektar.utils.NetworkUtils;
 import dagger.android.AndroidInjection;
 import dagger.android.DaggerActivity;
 import dagger.android.support.DaggerAppCompatActivity;
+import timber.log.Timber;
 
 /**
  * Created by amitshekhar on 07/07/17.
@@ -45,6 +47,7 @@ import dagger.android.support.DaggerAppCompatActivity;
 public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseViewModel> extends AppCompatActivity
         implements BaseFragment.Callback {
 
+    private static final String TAG = BaseActivity.class.getName();
     // TODO
     // this can probably depend on isLoading variable of BaseViewModel,
     // since its going to be common for all the activities
@@ -92,6 +95,7 @@ public abstract class BaseActivity<T extends ViewDataBinding, V extends BaseView
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         performDependencyInjection();
         super.onCreate(savedInstanceState);
+        Log.d(TAG,"OnCreate BASEACTIVITY" );
         performDataBinding();
     }
 

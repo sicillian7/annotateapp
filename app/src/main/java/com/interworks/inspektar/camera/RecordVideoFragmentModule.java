@@ -1,12 +1,14 @@
 package com.interworks.inspektar.camera;
 
 import android.hardware.Camera;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.interworks.inspektar.R;
 import com.interworks.inspektar.annotations.adapter.KeywordsAdapter;
 import com.interworks.inspektar.annotations.view.AnnotationGridDialog;
+import com.interworks.inspektar.annotations.view.KeywordsDialog;
 import com.interworks.inspektar.base.ViewModelFactory;
 import com.interworks.inspektar.camera.utils.AutoFitTextureView;
 import com.interworks.inspektar.camera.utils.CameraManager;
@@ -26,7 +28,8 @@ public class RecordVideoFragmentModule {
 
     @Provides
     RecyclerView.LayoutManager providesLayoutManager(CameraActivity c){
-        return new LinearLayoutManager(c);
+        GridLayoutManager manager = new GridLayoutManager(c,3);
+        return new GridLayoutManager(c, 3);
     }
 
 
@@ -40,9 +43,14 @@ public class RecordVideoFragmentModule {
         return new KeywordsAdapter();
     }
 
+//    @Provides
+//    AnnotationGridDialog providesKeywordsDialog(CameraActivity c, RecyclerView.LayoutManager layoutManager, KeywordsAdapter adapter){
+//        return new AnnotationGridDialog(c.findViewById(R.id.container),adapter, layoutManager);
+//    }
+
     @Provides
-    AnnotationGridDialog providesKeywordsDialog(CameraActivity c, RecyclerView.LayoutManager layoutManager, KeywordsAdapter adapter){
-        return new AnnotationGridDialog(c.findViewById(R.id.container ),adapter, layoutManager);
+    KeywordsDialog providesKeywordsDialog(CameraActivity c, RecyclerView.LayoutManager layoutManager, KeywordsAdapter adapter){
+        return new KeywordsDialog(c, adapter,layoutManager);
     }
 
     @Provides

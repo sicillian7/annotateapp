@@ -1,6 +1,7 @@
 package com.interworks.inspektar.annotations.adapter;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.interworks.inspektar.R;
+import com.interworks.inspektar.databinding.ItemImageWithTextBinding;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,20 +29,25 @@ public class KeywordsAdapter extends RecyclerView.Adapter<KeywordsAdapter.ViewHo
 
     private List<KeywordEntity> items = new ArrayList<>();
     private ActionListener mListener;
+    private LayoutInflater inflater;
 
     @NonNull
     @Override
     public KeywordsAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_image_with_text, parent, false);
-        return new ViewHolder(itemView, this);
+        if (inflater == null) {
+            inflater = LayoutInflater.from(parent.getContext());
+        }
+
+        ItemImageWithTextBinding binding = DataBindingUtil.inflate(inflater, R.layout.item_image_with_text, parent, false);
+        return new ViewHolder(binding, this);
     }
 
     @Override
     public void onBindViewHolder(@NonNull KeywordsAdapter.ViewHolder holder, int position) {
         Context context = holder.itemView.getContext();
         KeywordEntity kw = items.get(position);
-        holder.tv.setText(kw.getName());
-        holder.image.setImageResource(context.getResources().getIdentifier(kw.getResPath(),"drawable", context.getPackageName()));
+        holder.binding.text.setText(kw.getName());
+        holder.binding.image.setImageResource(context.getResources().getIdentifier(kw.getResPath(),"drawable", context.getPackageName()));
     }
 
     @Override
@@ -59,16 +67,13 @@ public class KeywordsAdapter extends RecyclerView.Adapter<KeywordsAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @BindView(R.id.image)
-        ImageView image;
-        @BindView(R.id.text)
-        TextView tv;
+        private final ItemImageWithTextBinding binding;
 
         private WeakReference<KeywordsAdapter> weakAdapter;
 
-        public ViewHolder(View itemView, KeywordsAdapter l) {
-            super(itemView);
-            ButterKnife.bind(itemView);
+        public ViewHolder(ItemImageWithTextBinding binding, KeywordsAdapter l) {
+            super(binding.getRoot());
+            this.binding = binding;
             weakAdapter = new WeakReference<>(l);
             itemView.setOnClickListener(this);
         }

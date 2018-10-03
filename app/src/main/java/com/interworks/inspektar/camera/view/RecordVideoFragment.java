@@ -7,6 +7,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,14 +25,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.interworks.inspektar.BR;
 import com.interworks.inspektar.R;
 import com.interworks.inspektar.annotations.view.AnnotationGridDialog;
+import com.interworks.inspektar.annotations.view.KeywordsDialog;
 import com.interworks.inspektar.annotations.viewModel.AnnotationViewModel;
 import com.interworks.inspektar.base.BaseFragment;
 import com.interworks.inspektar.base.BaseViewModel;
 import com.interworks.inspektar.base.ViewModelFactory;
 import com.interworks.inspektar.camera.CameraContract;
 import com.interworks.inspektar.camera.viewModel.CameraViewModel;
+import com.interworks.inspektar.databinding.CameraRecordFragmentBinding;
 
 import java.lang.ref.WeakReference;
 
@@ -57,20 +61,18 @@ public class RecordVideoFragment extends DaggerFragment {
 
     @Inject
     CameraContract mCameraService;
-    Unbinder unbinder;
     @Inject
     CameraActivity mActivity;
     private boolean isRecording;
-    @BindView(R.id.btnRecord)
-    ImageButton mButtonVideo;
-    @BindView(R.id.camera_preview)
-    FrameLayout mCameraPreview;
+
     @Inject
-    AnnotationGridDialog keywordsDialog;
+    KeywordsDialog keywordsDialog;
     @Inject
     ViewModelFactory mFactory;
 
+    private View mRootView;
     private CameraViewModel mCameraViewModel;
+    CameraRecordFragmentBinding binding;
 
     public RecordVideoFragment() {
     }
@@ -79,12 +81,28 @@ public class RecordVideoFragment extends DaggerFragment {
         return new RecordVideoFragment();
     }
 
+//    @Override
+//    public int getBindingVariable() {
+//        return BR.viewModel;
+//    }
+//
+//    @Override
+//    public int getLayoutId() {
+//        return R.layout.camera_record_fragment;
+//    }
+
+//    @Override
+//    public CameraViewModel getViewModel() {
+//        mCameraViewModel = ViewModelProviders.of(this, mFactory).get(CameraViewModel.class);
+//        return mCameraViewModel;
+//    }
+
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.camera_record_fragment, container, false);
-        unbinder = ButterKnife.bind(this,v);
-        return v;
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = DataBindingUtil.inflate(inflater, R.layout.camera_record_fragment, container, false);
+        mRootView = binding.getRoot();
+        return mRootView;
     }
 
     @Override
@@ -97,11 +115,9 @@ public class RecordVideoFragment extends DaggerFragment {
         if (mActivity.isFinishing()) {
             return;
         }
-
         mCameraViewModel = ViewModelProviders.of(this, mFactory).get(CameraViewModel.class);
-      //  mCameraPreview.addView(mCameraService.appendCameraPreview());
-        mCameraPreview.addView(mCameraService.appendTexture());
-        mCameraPreview.setOnTouchListener(new OnTouchListener(this));
+        binding.cameraPreview.addView(mCameraService.appendTexture());
+        binding.cameraPreview.setOnTouchListener(new OnTouchListener(this));
         keywordsDialog.setListener(new KeywordsDialogActionListener(this));
     }
 
@@ -132,10 +148,10 @@ public class RecordVideoFragment extends DaggerFragment {
     void onRecordClick(View view){
         if (mActivity != null) {
             if (isRecording) {
-                mButtonVideo.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_btn_rec));
+                binding.btnRecord.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_btn_rec));
                 mCameraService.stopRecordingVideo();
             }else{
-                mButtonVideo.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_btn_stop));
+                binding.btnRecord.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_btn_stop));
                 mCameraService.startRecordingVideo();
             }
             isRecording = !isRecording;
@@ -144,15 +160,16 @@ public class RecordVideoFragment extends DaggerFragment {
 
     public void displayKeywordsDialog(AnnotationViewModel m, float x, float y){
         keywordsDialog.setViewModel(m);
-        keywordsDialog.show(x,y);
+        keywordsDialog.notifyDatasetChanged(mCameraViewModel.getKeywords());
+       // keywordsDialog.show(x,y);
+        keywordsDialog.show();
     }
 
     @Override
     public void onDestroyView() {
-        unbinder.unbind();
-        if (keywordsDialog != null) {
-            keywordsDialog.unbindViews();
-        }
+//        if (keywordsDialog != null) {
+//            keywordsDialog.unbindViews();
+//        }
         super.onDestroyView();
     }
 

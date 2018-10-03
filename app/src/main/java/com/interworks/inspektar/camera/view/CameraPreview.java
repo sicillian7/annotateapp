@@ -11,6 +11,7 @@ import android.view.SurfaceView;
 
 import java.io.IOException;
 
+@Deprecated
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
     public static final String TAG = CameraPreview.class.getName();

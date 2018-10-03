@@ -1,6 +1,4 @@
 package com.interworks.inspektar.camera.viewModel;
-import android.arch.lifecycle.ViewModel;
-import android.util.Log;
 
 import com.interworks.inspektar.base.BaseViewModel;
 
@@ -55,6 +53,10 @@ public class CameraViewModel extends BaseViewModel{
     protected void onCleared() {
         mCompositeDisposable.clear();
         super.onCleared();
+    }
+
+    public List<KeywordEntity> getKeywords(){
+        return mKeywords;
     }
 
     private static class KeywordsObserver implements SingleObserver<List<KeywordEntity>>{

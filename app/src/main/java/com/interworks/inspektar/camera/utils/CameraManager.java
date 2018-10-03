@@ -41,6 +41,7 @@ import android.view.SurfaceHolder;
  * {@code android.hardware.Camera.OnZoomChangeListener}, and
  * {@code android.hardware.Camera.Parameters}.
  */
+@Deprecated
 public interface CameraManager {
 
     /**

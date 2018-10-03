@@ -1,12 +1,16 @@
 package com.interworks.inspektar.annotations.view;
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import com.interworks.inspektar.R;
@@ -14,8 +18,10 @@ import com.interworks.inspektar.annotations.adapter.KeywordsAdapter;
 import com.interworks.inspektar.annotations.viewModel.AnnotationViewModel;
 import com.interworks.inspektar.base.IWPopupWindow;
 import com.interworks.inspektar.base.ViewModelFactory;
+import com.interworks.inspektar.databinding.AnnotationViewSwitcherBinding;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -23,6 +29,7 @@ import butterknife.BindView;
 import mk.com.interworks.domain.model.AnnotationEntity;
 import mk.com.interworks.domain.model.KeywordEntity;
 
+@Deprecated
 public class AnnotationGridDialog extends IWPopupWindow implements
         AdapterView.OnItemClickListener, View.OnClickListener {
 
@@ -30,8 +37,7 @@ public class AnnotationGridDialog extends IWPopupWindow implements
         void onKeywordSelected(AnnotationViewModel vm);
     }
 
-    @BindView(R.id.keywordsGrid)
-    RecyclerView mKeywordsGridView;
+    AnnotationViewSwitcherBinding binding;
     KeywordsAdapter mKeywordsAdapter;
     RecyclerView.LayoutManager mLayoutManager;
 
@@ -50,17 +56,23 @@ public class AnnotationGridDialog extends IWPopupWindow implements
     }
 
     protected void initView() {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        if (inflater != null) {
+          //  binding = AnnotationViewSwitcherBinding.inflate(LayoutInflater.from(getContext()), R.layout.annotation_view_switcher, null, false);
+            Resources res = context.getResources();
+            int width = res.getDimensionPixelSize(R.dimen.grid_col_width)
+                    * res.getInteger(R.integer.num_of_columns)
+                    + res.getDimensionPixelSize(R.dimen.grid_margin) + 150;
+            setWidth(width);
+            //setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+            setHeight(200);
+            setBackgroundDrawable(new ColorDrawable(Color.BLACK));
+            mKeywordsAdapter.setActionListener(new OnKeywordsPopUpActionListener(this));
+            binding.keywordsGrid.setLayoutManager(mLayoutManager);
+            binding.keywordsGrid.addItemDecoration(new KeywordItemDecoration(10));
+            binding.keywordsGrid.setAdapter(mKeywordsAdapter);
+        }
 
-        Resources res = context.getResources();
-        int width = res.getDimensionPixelSize(R.dimen.grid_col_width)
-                * res.getInteger(R.integer.num_of_columns)
-                + res.getDimensionPixelSize(R.dimen.grid_margin) + 150;
-        setWidth(width);
-        setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-        setBackgroundDrawable(new ColorDrawable(Color.BLACK));
-        mKeywordsAdapter.setActionListener(new OnKeywordsPopUpActionListener(this));
-        mKeywordsGridView.setLayoutManager(mLayoutManager);
-        mKeywordsGridView.setAdapter(mKeywordsAdapter);
 
         //VIEW MODEL SHOULD FETCH KEYWORDS FOR FAVORITE AND PASS TO ADAPTER
     }
@@ -111,6 +123,10 @@ public class AnnotationGridDialog extends IWPopupWindow implements
             mViewModel.getEntity().setKeywordId(item.getId());
             mListener.onKeywordSelected(mViewModel);
         }
+    }
+
+    public void notifyDatasetChanged(List<KeywordEntity> items){
+        mKeywordsAdapter.newDataSetChanged(items);
     }
 
     public AnnotationViewModel getViewModel() {

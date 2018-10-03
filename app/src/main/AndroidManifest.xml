@@ -22,9 +22,9 @@
         <activity android:name=".MainActivity"/>
 
         <activity android:name=".camera.view.CameraActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="sensor">
+            android:screenOrientation="sensor"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

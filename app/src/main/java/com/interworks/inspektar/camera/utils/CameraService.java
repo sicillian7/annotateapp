@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+@Deprecated
 public class CameraService implements CameraContract {
 
     private static final String TAG = CameraService.class.getName();
