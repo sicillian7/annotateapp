@@ -15,5 +15,6 @@ public interface CameraContract {
     CameraPreview appendCameraPreview();
     AutoFitTextureView appendTexture();
     void setDisplayOrientation();
+    long getAnnotationStartTime();
     Rect getVideoArea();
 }

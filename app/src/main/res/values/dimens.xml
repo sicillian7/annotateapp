@@ -11,7 +11,9 @@
     
     <integer name="visible_rows">3</integer>
     <integer name="num_of_columns">3</integer>
-    
+
     <dimen name="details_text_size">18sp</dimen>
+    <dimen name="annotation_width">140dp</dimen>
+    <dimen name="annotation_height">55dp</dimen>
 
 </resources>

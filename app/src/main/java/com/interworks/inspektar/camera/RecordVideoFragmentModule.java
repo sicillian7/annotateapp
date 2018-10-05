@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import com.interworks.inspektar.R;
 import com.interworks.inspektar.annotations.adapter.KeywordsAdapter;
 import com.interworks.inspektar.annotations.view.AnnotationGridDialog;
+import com.interworks.inspektar.annotations.view.KeywordItemDecoration;
 import com.interworks.inspektar.annotations.view.KeywordsDialog;
 import com.interworks.inspektar.base.ViewModelFactory;
 import com.interworks.inspektar.camera.utils.AutoFitTextureView;
@@ -43,14 +44,15 @@ public class RecordVideoFragmentModule {
         return new KeywordsAdapter();
     }
 
-//    @Provides
-//    AnnotationGridDialog providesKeywordsDialog(CameraActivity c, RecyclerView.LayoutManager layoutManager, KeywordsAdapter adapter){
-//        return new AnnotationGridDialog(c.findViewById(R.id.container),adapter, layoutManager);
-//    }
 
     @Provides
-    KeywordsDialog providesKeywordsDialog(CameraActivity c, RecyclerView.LayoutManager layoutManager, KeywordsAdapter adapter){
-        return new KeywordsDialog(c, adapter,layoutManager);
+    KeywordsDialog providesKeywordsDialog(CameraActivity c, RecyclerView.LayoutManager layoutManager, KeywordsAdapter adapter, KeywordItemDecoration decoration){
+        return new KeywordsDialog(c, adapter,layoutManager,decoration);
+    }
+
+    @Provides
+    KeywordItemDecoration providesKeywordItemDecoration(CameraActivity c){
+        return new KeywordItemDecoration((int) c.getResources().getDimension(R.dimen.material_component_cards_action_button_row_padding));
     }
 
     @Provides

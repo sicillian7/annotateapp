@@ -23,7 +23,7 @@ public class KeywordItemDecoration extends RecyclerView.ItemDecoration{
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
                                RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
-        outRect.set(0, 0, 0, 0);
+        outRect.set(mItemOffset, mItemOffset, mItemOffset, mItemOffset);
 //        outRect.left = mItemOffset;
 //        outRect.bottom = mItemOffset;
 //        outRect.top = mItemOffset;

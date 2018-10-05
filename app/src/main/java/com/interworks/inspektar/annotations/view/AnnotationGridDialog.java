@@ -56,10 +56,7 @@ public class AnnotationGridDialog extends IWPopupWindow implements
     }
 
     protected void initView() {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if (inflater != null) {
-          //  binding = AnnotationViewSwitcherBinding.inflate(LayoutInflater.from(getContext()), R.layout.annotation_view_switcher, null, false);
-            Resources res = context.getResources();
+         Resources res = context.getResources();
             int width = res.getDimensionPixelSize(R.dimen.grid_col_width)
                     * res.getInteger(R.integer.num_of_columns)
                     + res.getDimensionPixelSize(R.dimen.grid_margin) + 150;
@@ -71,8 +68,6 @@ public class AnnotationGridDialog extends IWPopupWindow implements
             binding.keywordsGrid.setLayoutManager(mLayoutManager);
             binding.keywordsGrid.addItemDecoration(new KeywordItemDecoration(10));
             binding.keywordsGrid.setAdapter(mKeywordsAdapter);
-        }
-
 
         //VIEW MODEL SHOULD FETCH KEYWORDS FOR FAVORITE AND PASS TO ADAPTER
     }

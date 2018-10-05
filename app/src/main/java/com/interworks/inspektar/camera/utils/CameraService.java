@@ -134,6 +134,11 @@ public class CameraService implements CameraContract {
         }
     }
 
+    @Override
+    public long getAnnotationStartTime() {
+        return 0;
+    }
+
     public boolean prepareVideoRecorder() throws IOException {
 
         mMediaRecorder = new MediaRecorder();

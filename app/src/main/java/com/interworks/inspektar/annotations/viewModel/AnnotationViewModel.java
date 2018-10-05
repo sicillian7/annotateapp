@@ -6,11 +6,13 @@ import android.graphics.Rect;
 import android.view.View;
 
 import mk.com.interworks.domain.model.AnnotationEntity;
+import mk.com.interworks.domain.model.KeywordEntity;
 
 public class AnnotationViewModel {
 
     private float x,y;
     private AnnotationEntity entity;
+    private KeywordEntity keyword;
 
   //  private Rect mVideoRect;
     private View mCameraView;
@@ -18,12 +20,13 @@ public class AnnotationViewModel {
     public AnnotationViewModel() {
     }
 
-    public AnnotationViewModel(float x, float y, View cameraView) {
+    public AnnotationViewModel(float x, float y, View cameraView, long startTime) {
         entity = new AnnotationEntity();
+        entity.setFrom(startTime);
         mCameraView = cameraView;
-        PointF p = absoluteToRelative(x,y);
-        entity.setX(p.x);
-        entity.setY(p.y);
+        //PointF p = absoluteToRelative(x,y);
+        entity.setX(x);
+        entity.setY(y);
      //   mVideoRect = videoRectangle;
     }
 
@@ -65,5 +68,13 @@ public class AnnotationViewModel {
 
     public void setEntity(AnnotationEntity entity) {
         this.entity = entity;
+    }
+
+    public KeywordEntity getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(KeywordEntity keyword) {
+        this.keyword = keyword;
     }
 }

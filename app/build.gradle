@@ -57,6 +57,9 @@ dependencies {
 
     implementation "android.arch.lifecycle:extensions:$archcomp_version"
     implementation "android.arch.lifecycle:viewmodel:$archcomp_version"
+    implementation "com.dmitrymalkovich.android:material-design-dimens:$material_design_dimensions_version"
+    implementation "com.squareup.picasso:picasso:$picasso_version"
+
 
     implementation project(path: ':data')
 }

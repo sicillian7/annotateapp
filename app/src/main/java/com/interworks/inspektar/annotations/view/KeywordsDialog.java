@@ -18,25 +18,34 @@ import com.interworks.inspektar.databinding.AnnotationViewSwitcherBinding;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 import mk.com.interworks.domain.model.KeywordEntity;
 
 public class KeywordsDialog extends Dialog {
 
+    public interface OnActionListener{
+        void onKeywordSelected(AnnotationViewModel vm);
+    }
+
+    KeywordItemDecoration mItemDecoration;
     AnnotationViewSwitcherBinding binding;
     KeywordsAdapter mKeywordsAdapter;
     RecyclerView.LayoutManager mLayoutManager;
 
-    private AnnotationGridDialog.OnActionListener mListener;
+    private OnActionListener mListener;
 
     private float posX, posY;
     private AnnotationViewModel mViewModel;
     private Context mContext;
 
-    public KeywordsDialog(@NonNull Context context, KeywordsAdapter adapter, RecyclerView.LayoutManager layoutManager) {
+    public KeywordsDialog(@NonNull Context context, KeywordsAdapter adapter, RecyclerView.LayoutManager layoutManager, KeywordItemDecoration decoration) {
         super(context);
         mContext = context;
         this.mLayoutManager = layoutManager;
         this.mKeywordsAdapter = adapter;
+        mItemDecoration = decoration;
         init();
     }
 
@@ -53,13 +62,13 @@ public class KeywordsDialog extends Dialog {
         setContentView(binding.getRoot());
         mKeywordsAdapter.setActionListener(new KeywordsDialog.OnKeywordsPopUpActionListener(this));
         binding.keywordsGrid.setLayoutManager(mLayoutManager);
-        binding.keywordsGrid.addItemDecoration(new KeywordItemDecoration(16));
+        binding.keywordsGrid.addItemDecoration(mItemDecoration);
         binding.keywordsGrid.setAdapter(mKeywordsAdapter);
     }
 
     public void onKeywordSelected(KeywordEntity item){
         if (mListener != null) {
-            mViewModel.getEntity().setKeywordId(item.getId());
+            mViewModel.setKeyword(item);
             mListener.onKeywordSelected(mViewModel);
         }
     }
@@ -72,7 +81,7 @@ public class KeywordsDialog extends Dialog {
         this.mViewModel = mViewModel;
     }
 
-    public void setListener(AnnotationGridDialog.OnActionListener mListener) {
+    public void setListener(OnActionListener mListener) {
         this.mListener = mListener;
     }
 

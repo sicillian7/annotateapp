@@ -64,6 +64,7 @@ public class CameraServiceApi2<T extends Activity> implements CameraContract {
     }
 
     private AutoFitTextureView mTextureView;
+    private long startRecordTime;
 
     /**
      * A reference to the opened {@link android.hardware.camera2.CameraDevice}.
@@ -494,7 +495,7 @@ public class CameraServiceApi2<T extends Activity> implements CameraContract {
                         mActivity.runOnUiThread(() -> {
                             // UI
                             mIsRecordingVideo = true;
-
+                            startRecordTime = System.currentTimeMillis();
                             // Start recording
                             mMediaRecorder.start();
                         });
@@ -569,6 +570,11 @@ public class CameraServiceApi2<T extends Activity> implements CameraContract {
     @Override
     public void setDisplayOrientation() {
 
+    }
+
+    @Override
+    public long getAnnotationStartTime() {
+        return System.currentTimeMillis() - startRecordTime;
     }
 
     @Override

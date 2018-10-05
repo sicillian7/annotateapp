@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -23,11 +24,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.interworks.inspektar.BR;
 import com.interworks.inspektar.R;
 import com.interworks.inspektar.annotations.view.AnnotationGridDialog;
+import com.interworks.inspektar.annotations.view.AnnotationView;
 import com.interworks.inspektar.annotations.view.KeywordsDialog;
 import com.interworks.inspektar.annotations.viewModel.AnnotationViewModel;
 import com.interworks.inspektar.base.BaseFragment;
@@ -70,6 +73,7 @@ public class RecordVideoFragment extends DaggerFragment {
     @Inject
     ViewModelFactory mFactory;
 
+    private ClickHandlers handlers;
     private View mRootView;
     private CameraViewModel mCameraViewModel;
     CameraRecordFragmentBinding binding;
@@ -80,22 +84,6 @@ public class RecordVideoFragment extends DaggerFragment {
     public static RecordVideoFragment newInstance(){
         return new RecordVideoFragment();
     }
-
-//    @Override
-//    public int getBindingVariable() {
-//        return BR.viewModel;
-//    }
-//
-//    @Override
-//    public int getLayoutId() {
-//        return R.layout.camera_record_fragment;
-//    }
-
-//    @Override
-//    public CameraViewModel getViewModel() {
-//        mCameraViewModel = ViewModelProviders.of(this, mFactory).get(CameraViewModel.class);
-//        return mCameraViewModel;
-//    }
 
 
     @Override
@@ -115,6 +103,8 @@ public class RecordVideoFragment extends DaggerFragment {
         if (mActivity.isFinishing()) {
             return;
         }
+        handlers = new ClickHandlers(this);
+        binding.setHandlers(handlers);
         mCameraViewModel = ViewModelProviders.of(this, mFactory).get(CameraViewModel.class);
         binding.cameraPreview.addView(mCameraService.appendTexture());
         binding.cameraPreview.setOnTouchListener(new OnTouchListener(this));
@@ -144,8 +134,7 @@ public class RecordVideoFragment extends DaggerFragment {
         }
     }
 
-    @OnClick(R.id.btnRecord)
-    void onRecordClick(View view){
+    public void onRecordClick(View view){
         if (mActivity != null) {
             if (isRecording) {
                 binding.btnRecord.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_btn_rec));
@@ -161,7 +150,6 @@ public class RecordVideoFragment extends DaggerFragment {
     public void displayKeywordsDialog(AnnotationViewModel m, float x, float y){
         keywordsDialog.setViewModel(m);
         keywordsDialog.notifyDatasetChanged(mCameraViewModel.getKeywords());
-       // keywordsDialog.show(x,y);
         keywordsDialog.show();
     }
 
@@ -268,6 +256,22 @@ public class RecordVideoFragment extends DaggerFragment {
 
     }
 
+    public class ClickHandlers {
+
+        WeakReference<RecordVideoFragment> weakFragment;
+
+        public ClickHandlers(RecordVideoFragment f) {
+            weakFragment = new WeakReference<>(f);
+        }
+
+        public void onRecordClick(View view){
+            RecordVideoFragment f = weakFragment.get();
+            if (f != null) {
+                f.onRecordClick(view);
+            }
+        }
+    }
+
     private static class OnTouchListener implements View.OnTouchListener {
 
         private WeakReference<RecordVideoFragment> weakFrag;
@@ -279,8 +283,8 @@ public class RecordVideoFragment extends DaggerFragment {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             RecordVideoFragment frag = weakFrag.get();
-            if(motionEvent.getAction() == MotionEvent.ACTION_DOWN && frag != null){
-                AnnotationViewModel m = new AnnotationViewModel(motionEvent.getX(), motionEvent.getY(), frag.mCameraService.appendTexture());
+            if(frag.isRecording && motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+                AnnotationViewModel m = new AnnotationViewModel(motionEvent.getX(), motionEvent.getY(), frag.mCameraService.appendTexture(),frag.mCameraService.getAnnotationStartTime());
                 frag.displayKeywordsDialog(m, motionEvent.getX(), motionEvent.getY());
             }else{
                 return false;
@@ -290,7 +294,32 @@ public class RecordVideoFragment extends DaggerFragment {
         }
     }
 
-    private static class KeywordsDialogActionListener implements AnnotationGridDialog.OnActionListener{
+    private void attachAnnotationView(AnnotationViewModel vm){
+        AnnotationView annotationView = new AnnotationView(getActivity());
+        annotationView.setViewModel(vm);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,(int)getActivity().getResources().getDimension(R.dimen.annotation_height));
+        params.leftMargin = Math.round(vm.getEntity().getX());
+        params.topMargin = Math.round(vm.getEntity().getY());
+        binding.cameraPreview.addView(annotationView, params);
+        detachAnnotationView(annotationView);
+    }
+
+    private void detachAnnotationView(AnnotationView view){
+        WeakReference<AnnotationView> wRef = new WeakReference<>(view);
+        WeakReference<FrameLayout> wFrag = new WeakReference<>(binding.cameraPreview);
+        getActivity().runOnUiThread(() -> {
+            final Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                AnnotationView v = wRef.get();
+                FrameLayout layout = wFrag.get();
+                if (v != null && layout != null) {
+                    layout.removeView(v);
+                }
+            }, 1000);
+        });
+    }
+
+    private static class KeywordsDialogActionListener implements KeywordsDialog.OnActionListener{
         private WeakReference<RecordVideoFragment> weakFrag;
 
         public KeywordsDialogActionListener(RecordVideoFragment frag) {
@@ -301,9 +330,9 @@ public class RecordVideoFragment extends DaggerFragment {
         public void onKeywordSelected(AnnotationViewModel vm) {
             RecordVideoFragment frag = weakFrag.get();
             if (frag != null) {
-                Toast.makeText(frag.mActivity, "ANNOTATED WITH KEYWORD WITH ID:" + String.valueOf(vm.getEntity().getKeywordId()), Toast.LENGTH_SHORT).show();
+                frag.keywordsDialog.dismiss();
+                frag.attachAnnotationView(vm);
             }
-
         }
     }
 }

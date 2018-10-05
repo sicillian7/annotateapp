@@ -8,6 +8,9 @@
         <variable
             name="viewModel"
             type="com.interworks.inspektar.camera.viewModel.CameraViewModel" />
+        <variable
+            name="handlers"
+            type="com.interworks.inspektar.camera.view.RecordVideoFragment.ClickHandlers"/>
     </data>
 <FrameLayout
     android:id="@+id/parent"
@@ -61,7 +64,8 @@
                     android:background="@android:color/transparent"
                     android:src="@drawable/ic_btn_rec"
                     android:layout_gravity="center"
-                    android:layout_centerHorizontal="true"/>
+                    android:layout_centerHorizontal="true"
+                    android:onClick="@{handlers::onRecordClick}"/>
 
                 <ImageButton
                     android:id="@+id/btnFavorites"
