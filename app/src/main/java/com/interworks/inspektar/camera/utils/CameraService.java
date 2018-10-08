@@ -1,4 +1,4 @@
-package com.interworks.inspektar.camera;
+package com.interworks.inspektar.camera.utils;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,12 +15,15 @@ import android.util.SparseIntArray;
 import android.view.OrientationEventListener;
 import android.view.Surface;
 
+import com.interworks.inspektar.camera.CameraContract;
 import com.interworks.inspektar.camera.view.CameraPreview;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 
-public class CameraService implements CameraContract{
+@Deprecated
+public class CameraService implements CameraContract {
 
     private static final String TAG = CameraService.class.getName();
     private static final int SENSOR_ORIENTATION_DEFAULT_DEGREES = 90;
@@ -47,8 +50,6 @@ public class CameraService implements CameraContract{
     private int mDisplayRotation;
     private int mCameraDisplayOrientation;
 
-    private int mOrientation = OrientationEventListener.ORIENTATION_UNKNOWN;
-    private int mLastRawOrientation;
     private OrientationManager mOrientationManager;
 
     private Integer mSensorOrientation;
@@ -62,14 +63,13 @@ public class CameraService implements CameraContract{
 
     public CameraService(Activity c) {
         mContext = c;
-        init();
     }
 
-    private void init(){
+    public void setup(Camera cam, CameraPreview camPreview, OrientationManager om){
         try {
-            mCamera = Camera.open(); // attempt to get a Camera instance
-            mCameraPreview = new CameraPreview(mContext, mCamera);
-            mOrientationManager = new OrientationManager(mContext);
+            mCamera = cam; // attempt to get a Camera instance
+            mCameraPreview = camPreview;
+            mOrientationManager = om;
             setDisplayOrientation();
 
             mVideoArea = calculateVideoArea();
@@ -120,6 +120,11 @@ public class CameraService implements CameraContract{
     }
 
     @Override
+    public AutoFitTextureView appendTexture() {
+        return null;
+    }
+
+    @Override
     public void setDisplayOrientation() {
         mDisplayRotation = CameraUtil.getDisplayRotation(mContext);
         mCameraDisplayOrientation = CameraUtil.getDisplayOrientation(mDisplayRotation, 0);
@@ -127,6 +132,11 @@ public class CameraService implements CameraContract{
         if (mCamera != null) {
             mCamera.setDisplayOrientation(mCameraDisplayOrientation);
         }
+    }
+
+    @Override
+    public long getAnnotationStartTime() {
+        return 0;
     }
 
     public boolean prepareVideoRecorder() throws IOException {
@@ -189,9 +199,18 @@ public class CameraService implements CameraContract{
         } else {  // back-facing
             result = (info.orientation - degrees + 360) % 360;
         }
-        camera.setDisplayOrientation(result);
+       // camera.setDisplayOrientation(result);
+        Method downPolymorphic;
+        try
+        {
+            downPolymorphic = camera.getClass().getMethod("setDisplayOrientation", new Class[] { int.class });
+            if (downPolymorphic != null)
+                downPolymorphic.invoke(camera, new Object[] { result });
+        }
+        catch (Exception e1)
+        {
+        }
     }
-
 
     private String getVideoFilePath(Context context) {
         final File dir = context.getExternalFilesDir(null);
@@ -245,5 +264,15 @@ public class CameraService implements CameraContract{
             mCamera.release();        // release the camera for other applications
             mCamera = null;
         }
+    }
+
+    @Override
+    public void prepareCamera() {
+
+    }
+
+    @Override
+    public void stopBackgroundThread() {
+
     }
 }

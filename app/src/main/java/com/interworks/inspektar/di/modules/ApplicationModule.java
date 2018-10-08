@@ -5,29 +5,25 @@ import android.content.Context;
 
 import com.interworks.inspektar.InspektARApplication;
 import com.interworks.inspektar.UIThread;
-import com.interworks.inspektar.di.scopes.ApplicationScope;
 
 import javax.inject.Singleton;
 
+import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
+import mk.com.interworks.data.LocalDataSource;
 import mk.com.interworks.data.executor.JobExecutor;
 import mk.com.interworks.domain.executor.PostExecutionThread;
 import mk.com.interworks.domain.executor.ThreadExecutor;
+import mk.com.interworks.domain.repository.LocalDataRepository;
 
-@Module
+@Module(includes = {ViewModelModule.class, DomainModule.class})
 public class ApplicationModule {
-
-    private InspektARApplication mApplication;
-
-    public ApplicationModule(InspektARApplication mApplication) {
-        this.mApplication = mApplication;
-    }
 
     @Singleton
     @Provides
-    public Context providesApplication(){
-        return mApplication;
+    Context provideContext(Application application) {
+        return application.getApplicationContext();
     }
 
     @Singleton
@@ -40,5 +36,11 @@ public class ApplicationModule {
     @Provides
     PostExecutionThread providePostExecutionThread(UIThread uiThread) {
         return uiThread;
+    }
+
+    @Singleton
+    @Provides
+    LocalDataRepository provideLocalDataRepository(Context context){
+        return new LocalDataSource(context);
     }
 }

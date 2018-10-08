@@ -12,6 +12,7 @@ import java.util.List;
 import mk.com.interworks.domain.Constants;
 import mk.com.interworks.domain.model.BaseEntity;
 import mk.com.interworks.domain.model.KeywordEntity;
+import mk.com.interworks.domain.model.relationships.FavoriteKeywordJoin;
 
 @Dao
 public interface KeywordsDAO {
@@ -28,6 +29,13 @@ public interface KeywordsDAO {
     @Query("SELECT * FROM " + Constants.KEYWORD_TABLE_NAME + " WHERE " + KeywordEntity.CATEGORY_ID + "=:categoryId")
     List<KeywordEntity> getKeywordsForCategory(long categoryId);
 
-    @Query("SELECT * FROM " + Constants.KEYWORD_TABLE_NAME + " WHERE " + KeywordEntity.CATEGORY_ID + " =1")
+    @Query("SELECT * FROM " + Constants.KEYWORD_TABLE_NAME + " WHERE " + KeywordEntity.CATEGORY_ID + " =1 LIMIT 9")
     List<KeywordEntity> getDefaultKeywords();
+
+    @Query("SELECT * FROM " + Constants.KEYWORD_TABLE_NAME
+            + " WHERE " + Constants.KEYWORD_TABLE_NAME
+            + ".id IN (SELECT " + Constants.FAVORITE_KEYWORD_JOIN_TABLE_NAME + ".keyword_id FROM "
+            + Constants.FAVORITE_KEYWORD_JOIN_TABLE_NAME + " WHERE "
+            + Constants.FAVORITE_KEYWORD_JOIN_TABLE_NAME + ".favorite_id=:favoriteId)")
+    List<KeywordEntity> getKeywordsForFavorite(long favoriteId);
 }

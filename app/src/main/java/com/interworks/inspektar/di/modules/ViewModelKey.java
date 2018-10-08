@@ -1,4 +1,4 @@
-package com.interworks.inspektar.base;
+package com.interworks.inspektar.di.modules;
 
 
 import android.arch.lifecycle.ViewModel;

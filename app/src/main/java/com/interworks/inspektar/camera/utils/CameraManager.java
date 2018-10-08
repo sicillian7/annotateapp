@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.interworks.inspektar.camera;
+package com.interworks.inspektar.camera.utils;
 
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
@@ -41,6 +41,7 @@ import android.view.SurfaceHolder;
  * {@code android.hardware.Camera.OnZoomChangeListener}, and
  * {@code android.hardware.Camera.Parameters}.
  */
+@Deprecated
 public interface CameraManager {
 
     /**

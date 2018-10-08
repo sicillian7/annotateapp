@@ -2,6 +2,7 @@ package mk.com.interworks.domain.model;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -11,7 +12,7 @@ import mk.com.interworks.domain.Constants;
 public class KeywordEntity{
 
     public static final String BOOKMARKED = "bookmarked";
-    public static final String CATEGORY_ID = "category_id";
+    public static final String CATEGORY_ID = "categoryId";
     public static final String DISPLAY_ORDER = "display_order";
     public static final String IMAGE_URI = "image_uri";
     public static final String NAME = "name";
@@ -21,23 +22,27 @@ public class KeywordEntity{
 
 
     @NonNull
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = Constants.ID)
     private long id;
+    @Ignore
     @ColumnInfo(name = BOOKMARKED)
     private boolean bookmarked;
     @ColumnInfo(name = CATEGORY_ID)
     private long categoryId;
+    @Ignore
     @ColumnInfo(name = DISPLAY_ORDER)
     private int displayOrder;
-    @ColumnInfo(name = IMAGE_URI)
-    private String imageUri;
+//    @ColumnInfo(name = IMAGE_URI)
+//    private String imageUri;
     @ColumnInfo(name = NAME)
     private String name;
+    @Ignore
     @ColumnInfo(name = OLD)
     private long old;
     @ColumnInfo(name = RES_PATH)
     private String resPath;
+    @Ignore
     @ColumnInfo(name = VERSION)
     private long version;
 
@@ -74,13 +79,13 @@ public class KeywordEntity{
         this.name = name;
     }
 
-    public String getImageUri() {
-        return imageUri;
-    }
-
-    public void setImageUri(String imageUri) {
-        this.imageUri = imageUri;
-    }
+//    public String getImageUri() {
+//        return imageUri;
+//    }
+//
+//    public void setImageUri(String imageUri) {
+//        this.imageUri = imageUri;
+//    }
 
     public int getDisplayOrder() {
         return displayOrder;

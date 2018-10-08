@@ -1,28 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.interworks.inspektar.camera.viewModel.CameraViewModel" />
+        <variable
+            name="handlers"
+            type="com.interworks.inspektar.camera.view.RecordVideoFragment.ClickHandlers"/>
+    </data>
+<FrameLayout
+    android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <FrameLayout
-        android:id="@+id/camera_preview"
+        android:id="@+id/cameraPreview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="50dp"
+            android:clickable="true">
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/darker_gray"
                 android:alpha="0.5"/>
             <TextView
+                android:id="@+id/tvTitle"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -41,7 +54,8 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:clickable="true">
                 <ImageButton
                     android:id="@+id/btnRecord"
                     style="android:imageButtonStyle"
@@ -50,7 +64,8 @@
                     android:background="@android:color/transparent"
                     android:src="@drawable/ic_btn_rec"
                     android:layout_gravity="center"
-                    android:layout_centerHorizontal="true"/>
+                    android:layout_centerHorizontal="true"
+                    android:onClick="@{handlers::onRecordClick}"/>
 
                 <ImageButton
                     android:id="@+id/btnFavorites"
@@ -64,5 +79,5 @@
             </RelativeLayout>
         </FrameLayout>
     </RelativeLayout>
-
 </FrameLayout>
+</layout>

@@ -3,25 +3,31 @@ package com.interworks.inspektar.annotations.viewModel;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Rect;
+import android.view.View;
 
 import mk.com.interworks.domain.model.AnnotationEntity;
+import mk.com.interworks.domain.model.KeywordEntity;
 
 public class AnnotationViewModel {
 
     private float x,y;
     private AnnotationEntity entity;
+    private KeywordEntity keyword;
 
-    private Rect mVideoRect;
+  //  private Rect mVideoRect;
+    private View mCameraView;
 
     public AnnotationViewModel() {
     }
 
-    public AnnotationViewModel(float x, float y, Rect videoRectangle) {
+    public AnnotationViewModel(float x, float y, View cameraView, long startTime) {
         entity = new AnnotationEntity();
-        PointF p = absoluteToRelative(x,y);
-        entity.setX(p.x);
-        entity.setY(p.y);
-        mVideoRect = videoRectangle;
+        entity.setFrom(startTime);
+        mCameraView = cameraView;
+        //PointF p = absoluteToRelative(x,y);
+        entity.setX(x);
+        entity.setY(y);
+     //   mVideoRect = videoRectangle;
     }
 
     public float getX() {
@@ -42,16 +48,16 @@ public class AnnotationViewModel {
 
     public Point relativeToAbsolute(float x, float y) {
 
-        int dx = (int) (mVideoRect.width() * x);
-        int dy = (int) (mVideoRect.height() * y);
+        int dx = (int) (mCameraView.getWidth() * x);
+        int dy = (int) (mCameraView.getHeight() * y);
 
         return new Point(dx, dy);
     }
 
     public PointF absoluteToRelative(float x, float y) {
 
-        float dx = x / mVideoRect.width();
-        float dy = y / mVideoRect.height();
+        float dx = x / mCameraView.getWidth();
+        float dy = y / mCameraView.getWidth();
 
         return new PointF(dx, dy);
     }
@@ -64,11 +70,11 @@ public class AnnotationViewModel {
         this.entity = entity;
     }
 
-    public Rect getmVideoRect() {
-        return mVideoRect;
+    public KeywordEntity getKeyword() {
+        return keyword;
     }
 
-    public void setmVideoRect(Rect mVideoRect) {
-        this.mVideoRect = mVideoRect;
+    public void setKeyword(KeywordEntity keyword) {
+        this.keyword = keyword;
     }
 }

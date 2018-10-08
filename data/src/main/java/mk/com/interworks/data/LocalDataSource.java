@@ -16,6 +16,7 @@ import io.reactivex.Single;
 import mk.com.interworks.data.db.LocalDB;
 import mk.com.interworks.domain.model.AnnotationEntity;
 import mk.com.interworks.domain.model.CategoryEntity;
+import mk.com.interworks.domain.model.FavoriteEntity;
 import mk.com.interworks.domain.model.KeywordEntity;
 import mk.com.interworks.domain.model.NoteEntity;
 import mk.com.interworks.domain.model.VideoEntity;
@@ -211,6 +212,37 @@ public class LocalDataSource implements LocalDataRepository{
     }
 
     @Override
+    public Single<List<FavoriteEntity>> getAllFavorites() {
+        return Single.create(e -> {
+            try {
+                List<FavoriteEntity> lsItems = _db.favoritesDAO().getAllFavorites();
+                e.onSuccess(lsItems);
+
+            }catch (Exception e1){
+                e.onError(e1);
+            }
+        });
+    }
+
+    @Override
+    public Single<List<KeywordEntity>> getKeywordsForFavorite(long favoriteId) {
+        return Single.create(e -> {
+           try {
+               List<KeywordEntity> lsItems;
+               if(favoriteId > 0){
+                   lsItems = _db.keywordsDAO().getKeywordsForFavorite(favoriteId);
+               }else{
+                   lsItems = _db.keywordsDAO().getDefaultKeywords();
+               }
+               e.onSuccess(lsItems);
+           }catch (Exception e1){
+               e.onError(e1);
+           }
+        });
+    }
+
+
+    @Override
     public Single<List<NoteEntity>> getNotesForAnnotation(long annotationId) {
         return null;
     }
@@ -224,4 +256,6 @@ public class LocalDataSource implements LocalDataRepository{
     public Completable removeNotes(List<NoteEntity> lsNotes) {
         return null;
     }
+
+
 }
