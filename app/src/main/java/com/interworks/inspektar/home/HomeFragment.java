@@ -1,5 +1,6 @@
 package com.interworks.inspektar.home;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,14 +14,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.interworks.inspektar.R;
+import com.interworks.inspektar.base.ViewModelFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 public class HomeFragment extends Fragment{
 
     private ItemTouchHelper mItemTouchHelper;
     private List<VideoListTestData> videoList;
+
+    private HomeViewModel mHomeViewModel;
+
+    @Inject
+    ViewModelFactory mFactory;
 
 
 
@@ -45,6 +54,13 @@ public class HomeFragment extends Fragment{
 */
         return view;
 
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        //mHomeViewModel = ViewModelProviders.of(this, mFactory).get(HomeViewModel.class);
     }
 
     @Override
