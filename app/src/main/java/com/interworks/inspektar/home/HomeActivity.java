@@ -1,32 +1,17 @@
 package com.interworks.inspektar.home;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.internal.BottomNavigationMenuView;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
-import android.util.TypedValue;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.interworks.inspektar.MainActivity;
 import com.interworks.inspektar.R;
-import com.interworks.inspektar.base.BaseActivity;
-import com.interworks.inspektar.base.BaseViewModel;
 import com.interworks.inspektar.camera.view.CameraActivity;
 import com.interworks.inspektar.databinding.ActivityHomeBinding;
 

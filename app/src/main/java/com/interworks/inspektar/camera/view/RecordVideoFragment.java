@@ -49,6 +49,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import dagger.android.support.DaggerFragment;
+import mk.com.interworks.domain.model.VideoEntity;
 
 public class RecordVideoFragment extends DaggerFragment {
 
@@ -70,6 +71,8 @@ public class RecordVideoFragment extends DaggerFragment {
 
     @Inject
     KeywordsDialog keywordsDialog;
+    @Inject
+    SaveVideoDialog saveVideoDialog;
     @Inject
     ViewModelFactory mFactory;
 
@@ -109,6 +112,8 @@ public class RecordVideoFragment extends DaggerFragment {
         binding.cameraPreview.addView(mCameraService.appendTexture());
         binding.cameraPreview.setOnTouchListener(new OnTouchListener(this));
         keywordsDialog.setListener(new KeywordsDialogActionListener(this));
+        saveVideoDialog.setModel(mCameraViewModel.getTempVideoData());
+        saveVideoDialog.setOnActionListener(new SaveVideoDialogActionListener(this));
     }
 
     @Override
@@ -139,6 +144,7 @@ public class RecordVideoFragment extends DaggerFragment {
             if (isRecording) {
                 binding.btnRecord.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_btn_rec));
                 mCameraService.stopRecordingVideo();
+                saveVideoDialog.show();
             }else{
                 binding.btnRecord.setImageDrawable(ContextCompat.getDrawable(mActivity, R.drawable.ic_btn_stop));
                 mCameraService.startRecordingVideo();
@@ -159,6 +165,10 @@ public class RecordVideoFragment extends DaggerFragment {
 //            keywordsDialog.unbindViews();
 //        }
         super.onDestroyView();
+    }
+
+    public void displayError(String msg){
+        Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
     }
 
     private boolean shouldShowRequestPermissionRationale(String[] permissions) {
@@ -295,6 +305,7 @@ public class RecordVideoFragment extends DaggerFragment {
     }
 
     private void attachAnnotationView(AnnotationViewModel vm){
+        mCameraViewModel.addAnnotation(vm.getEntity());
         AnnotationView annotationView = new AnnotationView(getActivity());
         annotationView.setViewModel(vm);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,(int)getActivity().getResources().getDimension(R.dimen.annotation_height));
@@ -332,6 +343,41 @@ public class RecordVideoFragment extends DaggerFragment {
             if (frag != null) {
                 frag.keywordsDialog.dismiss();
                 frag.attachAnnotationView(vm);
+            }
+        }
+    }
+
+    private static class SaveVideoDialogActionListener implements SaveVideoDialog.OnActionListener{
+
+        private WeakReference<RecordVideoFragment> weakFrag;
+
+        public SaveVideoDialogActionListener(RecordVideoFragment f) {
+            weakFrag = new WeakReference<>(f);
+        }
+
+        @Override
+        public void onSave(VideoEntity model) {
+            RecordVideoFragment f = weakFrag.get();
+            if (f != null) {
+                f.mCameraViewModel.saveVideoData();
+                f.saveVideoDialog.dismiss();
+            }
+        }
+
+        @Override
+        public void onDiscard() {
+            RecordVideoFragment f = weakFrag.get();
+            if (f != null) {
+                f.saveVideoDialog.dismiss();
+            }
+        }
+
+        @Override
+        public void displayError(String err) {
+            RecordVideoFragment f = weakFrag.get();
+            if (f != null) {
+                f.displayError(err);
+                f.saveVideoDialog.dismiss();
             }
         }
     }

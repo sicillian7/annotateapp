@@ -3,6 +3,7 @@ package mk.com.interworks.domain.interactor.base;
 import org.assertj.core.util.Preconditions;
 
 import io.reactivex.Completable;
+import io.reactivex.Single;
 import io.reactivex.observers.DisposableCompletableObserver;
 import io.reactivex.schedulers.Schedulers;
 import mk.com.interworks.domain.executor.PostExecutionThread;
@@ -24,6 +25,11 @@ public abstract class UseCaseCompletable<Params> extends UseCase<Void,Params>  {
                 .subscribeOn(Schedulers.from(threadExecutor))
                 .observeOn(postExecutionThread.getScheduler());
         addDisposable(observable.subscribeWith(observer));
+    }
+
+    public Completable getObservableUsecase(Params params){
+        return this.buildUseCaseCompletable(params).subscribeOn(Schedulers.from(threadExecutor))
+                .observeOn(postExecutionThread.getScheduler());
     }
 
     protected abstract Completable buildUseCaseCompletable(Params params);

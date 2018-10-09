@@ -18,6 +18,9 @@ public interface AnnotationDAO {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(AnnotationEntity annotation);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    List<Long> insertBatch(List<AnnotationEntity> annotations);
+
     @Update
     void updateAnnotation(AnnotationEntity annotation);
 

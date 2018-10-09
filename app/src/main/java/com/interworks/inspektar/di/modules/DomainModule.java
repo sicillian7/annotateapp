@@ -5,6 +5,7 @@ import dagger.Provides;
 import mk.com.interworks.domain.executor.PostExecutionThread;
 import mk.com.interworks.domain.executor.ThreadExecutor;
 import mk.com.interworks.domain.interactor.annotationUseCases.AddAnnotationUseCaseCompletable;
+import mk.com.interworks.domain.interactor.annotationUseCases.AddAnnotationsUseCaseCompletable;
 import mk.com.interworks.domain.interactor.annotationUseCases.GetAnnotationsForVideoUsecaseSingle;
 import mk.com.interworks.domain.interactor.annotationUseCases.RemoveAnnotationUseCaseSCompletable;
 import mk.com.interworks.domain.interactor.categoryUseCases.GetAllCategoriesUseCaseSingle;
@@ -19,7 +20,7 @@ import mk.com.interworks.domain.interactor.videoUseCases.DeleteVideoUseCaseCompl
 import mk.com.interworks.domain.interactor.videoUseCases.GetAllVideosUseCaseSingle;
 import mk.com.interworks.domain.interactor.videoUseCases.GetVideoByIdUseCaseSingle;
 import mk.com.interworks.domain.interactor.videoUseCases.GetVideoIdByNameUseCaseSingle;
-import mk.com.interworks.domain.interactor.videoUseCases.SaveVideoUsecaseCompletable;
+import mk.com.interworks.domain.interactor.videoUseCases.SaveVideoUseCaseSingle;
 import mk.com.interworks.domain.repository.LocalDataRepository;
 
 @Module
@@ -36,6 +37,10 @@ public class DomainModule {
     @Provides
     RemoveAnnotationUseCaseSCompletable providesRemoveAnnotationUseCase(LocalDataRepository repo, ThreadExecutor workerThread, PostExecutionThread mainThread){
         return new RemoveAnnotationUseCaseSCompletable(repo, workerThread, mainThread);
+    }
+    @Provides
+    AddAnnotationsUseCaseCompletable providesAddAnnotationsUseCase(LocalDataRepository repo, ThreadExecutor workerThread, PostExecutionThread mainThread){
+        return new AddAnnotationsUseCaseCompletable(repo, workerThread, mainThread);
     }
     @Provides
     GetAllCategoriesUseCaseSingle providesGetCategoriesUseCase(LocalDataRepository repo, ThreadExecutor workerThread, PostExecutionThread mainThread){
@@ -73,8 +78,8 @@ public class DomainModule {
         return new RemoveNoteUseCaseCompletable(repo, workerThread, mainThread);
     }
     @Provides
-    SaveVideoUsecaseCompletable providesSaveVideoUseCase(LocalDataRepository repo, ThreadExecutor workerThread, PostExecutionThread mainThread){
-        return new SaveVideoUsecaseCompletable(repo, workerThread, mainThread);
+    SaveVideoUseCaseSingle providesSaveVideoUseCase(LocalDataRepository repo, ThreadExecutor workerThread, PostExecutionThread mainThread){
+        return new SaveVideoUseCaseSingle(repo, workerThread, mainThread);
     }
     @Provides
     GetAllVideosUseCaseSingle providesGetVideosUseCase(LocalDataRepository repo, ThreadExecutor workerThread, PostExecutionThread mainThread){

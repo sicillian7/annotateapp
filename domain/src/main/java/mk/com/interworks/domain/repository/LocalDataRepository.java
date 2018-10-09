@@ -13,13 +13,15 @@ import mk.com.interworks.domain.model.VideoEntity;
 
 public interface LocalDataRepository {
 
-    Completable saveVideo(VideoEntity video);
+    Single<Long> saveVideo(VideoEntity video);
+   // Completable saveVideo(VideoEntity video);
     Single<List<VideoEntity>> getAllVideos();
     Single<VideoEntity> getVideoById(long id);
     Completable removeVideo(VideoEntity video);
     Single<Integer> getVideoIdByName(String videoName);
     Completable addAnnotation(AnnotationEntity annotation);
     Completable removeAnnotation(AnnotationEntity annotation);
+    Single<List<Long>> addAnnotationsForVideo(List<AnnotationEntity> annotations);
     Single<List<AnnotationEntity>> getAnnotationsForVideo(long videoId);
     Single<List<CategoryEntity>> getAllCategories();
     Single<List<KeywordEntity>> getAllKeywords();

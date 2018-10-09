@@ -18,11 +18,15 @@ import com.interworks.inspektar.camera.utils.CameraServiceApi2;
 import com.interworks.inspektar.camera.utils.OrientationManager;
 import com.interworks.inspektar.camera.view.CameraActivity;
 import com.interworks.inspektar.camera.view.CameraPreview;
+import com.interworks.inspektar.camera.view.SaveVideoDialog;
 import com.interworks.inspektar.di.modules.DomainModule;
 import com.interworks.inspektar.di.scopes.PerActivity;
 
+import javax.inject.Named;
+
 import dagger.Module;
 import dagger.Provides;
+import mk.com.interworks.domain.model.VideoEntity;
 
 @Module(includes = {DomainModule.class})
 public class RecordVideoFragmentModule {
@@ -54,6 +58,13 @@ public class RecordVideoFragmentModule {
     KeywordItemDecoration providesKeywordItemDecoration(CameraActivity c){
         return new KeywordItemDecoration((int) c.getResources().getDimension(R.dimen.material_component_cards_action_button_row_padding));
     }
+
+
+    @Provides
+    SaveVideoDialog providesSaveVideoDialog(CameraActivity c){
+        return new SaveVideoDialog(c);
+    }
+
 
     @Provides
     CameraContract providesCameraService(CameraActivity act, OrientationManager orientationManager){

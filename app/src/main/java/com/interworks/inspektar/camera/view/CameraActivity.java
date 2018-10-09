@@ -54,7 +54,6 @@ public class CameraActivity extends AppCompatActivity implements HasSupportFragm
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AndroidInjection.inject(this);
-        Log.d(TAG, "OnCreate CameraAcitivity");
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.camera_activity);
         viewModel = ViewModelProviders.of(this, mViewModelFactory).get(CameraViewModel.class);

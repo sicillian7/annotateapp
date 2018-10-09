@@ -14,4 +14,10 @@
     <string name="add_new_video">ADD NEW VIDEO</string>
     <string name="export">EXPORT</string>
     <string name="annotations">ANNOTATIONS</string>
+
+    <string name="btnDiscard">Discard</string>
+    <string name="lblVideoDescription">Video description:</string>
+    <string name="lblVideoName">Video title:</string>
+    <string name="save">Save</string>
+    <string name="discard">Discard</string>
 </resources>

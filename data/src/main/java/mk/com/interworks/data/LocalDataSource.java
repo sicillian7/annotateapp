@@ -95,14 +95,14 @@ public class LocalDataSource implements LocalDataRepository{
     }
 
     @Override
-    public Completable saveVideo(final VideoEntity video) {
-        return  Completable.create( e -> {
+    public Single<Long> saveVideo(final VideoEntity video) {
+        return Single.create(e -> {
             try {
-                    _db.videoDAO().insert(video);
-                    e.onComplete();
-                }catch (Exception ex){
-                   e.onError(ex);
-                }
+                long _id = _db.videoDAO().insert(video);
+                e.onSuccess(_id);
+            }catch (Exception e1){
+                e.onError(e1);
+            }
         });
     }
 
@@ -168,6 +168,18 @@ public class LocalDataSource implements LocalDataRepository{
                 e.onComplete();
             } catch (Exception e1) {
                 e.onError(e1);
+            }
+        });
+    }
+
+    @Override
+    public Single<List<Long>> addAnnotationsForVideo(List<AnnotationEntity> annotations) {
+        return Single.create(e -> {
+            try{
+                List<Long> ids = _db.annotationDAO().insertBatch(annotations);
+                e.onSuccess(ids);
+            }catch (Exception ex){
+                e.onError(ex);
             }
         });
     }

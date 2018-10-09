@@ -17,6 +17,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+@Deprecated
 public class ImageSpinner extends LinearLayout {
 
     @BindView(R.id.imgIcon)

@@ -17,7 +17,7 @@ import mk.com.interworks.domain.model.VideoEntity;
 public interface VideoDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(VideoEntity video);
+    long insert(VideoEntity video);
 
     @Delete
     void delete(VideoEntity video);
