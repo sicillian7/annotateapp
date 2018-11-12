@@ -1,6 +1,9 @@
 package com.interworks.inspektar.utils;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import java.io.File;
@@ -25,5 +28,17 @@ public class Utils {
             Log.e(LOG_TAG, "Directory not created");
         }
         return file;
+    }
+
+    public static boolean hasPermissionsGranted(Context context, String[] permissions) {
+        if (context != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

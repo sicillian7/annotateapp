@@ -39,16 +39,20 @@ import com.interworks.inspektar.base.ViewModelFactory;
 import com.interworks.inspektar.camera.CameraContract;
 import com.interworks.inspektar.camera.viewModel.CameraViewModel;
 import com.interworks.inspektar.databinding.CameraRecordFragmentBinding;
+import com.interworks.inspektar.utils.ScreenUtils;
+import com.interworks.inspektar.utils.Utils;
 
 import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import dagger.android.support.DaggerFragment;
+import mk.com.interworks.domain.model.AnnotationEntity;
 import mk.com.interworks.domain.model.VideoEntity;
 
 public class RecordVideoFragment extends DaggerFragment {
@@ -99,10 +103,7 @@ public class RecordVideoFragment extends DaggerFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (!hasPermissionsGranted(VIDEO_PERMISSIONS)) {
-            requestVideoPermissions();
-            return;
-        }
+
         if (mActivity.isFinishing()) {
             return;
         }
@@ -128,6 +129,12 @@ public class RecordVideoFragment extends DaggerFragment {
         if (mCameraService != null) {
             mCameraService.releaseCamera();
             mCameraService.stopBackgroundThread();
+            if (keywordsDialog.isShowing()) {
+                keywordsDialog.dismiss();
+            }
+            if (saveVideoDialog.isShowing()) {
+                saveVideoDialog.dismiss();
+            }
         }
     }
 
@@ -164,6 +171,7 @@ public class RecordVideoFragment extends DaggerFragment {
 //        if (keywordsDialog != null) {
 //            keywordsDialog.unbindViews();
 //        }
+        binding.unbind();
         super.onDestroyView();
     }
 
@@ -171,77 +179,13 @@ public class RecordVideoFragment extends DaggerFragment {
         Toast.makeText(mActivity, msg, Toast.LENGTH_SHORT).show();
     }
 
-    private boolean shouldShowRequestPermissionRationale(String[] permissions) {
-        if (mActivity != null) {
-            for (String permission : permissions) {
-                if (ActivityCompat.shouldShowRequestPermissionRationale(mActivity, permission)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
-    private void requestVideoPermissions() {
-        if (mActivity != null) {
-            if (shouldShowRequestPermissionRationale(VIDEO_PERMISSIONS)) {
-                new ConfirmationDialog().show(getChildFragmentManager(), FRAGMENT_DIALOG);
-            } else {
-                ActivityCompat.requestPermissions(mActivity, VIDEO_PERMISSIONS, REQUEST_VIDEO_PERMISSIONS);
-            }
-        }
 
-    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        Log.d(TAG, "onRequestPermissionsResult");
-        if (requestCode == REQUEST_VIDEO_PERMISSIONS) {
-            if (grantResults.length == VIDEO_PERMISSIONS.length) {
-                for (int result : grantResults) {
-                    if (result != PackageManager.PERMISSION_GRANTED) {
-                        ErrorDialog.newInstance(mActivity.getResources().getString(R.string.permission_request))
-                                .show(getChildFragmentManager(), FRAGMENT_DIALOG);
-                        break;
-                    }
-                }
-            } else {
-                ErrorDialog.newInstance(getString(R.string.permission_request))
-                        .show(getChildFragmentManager(), FRAGMENT_DIALOG);
-            }
-        } else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
 
-    private boolean hasPermissionsGranted(String[] permissions) {
-        if (mActivity != null) {
-            for (String permission : permissions) {
-                if (ActivityCompat.checkSelfPermission(mActivity, permission)
-                        != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
 
-    public static class ConfirmationDialog extends DialogFragment {
 
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final Fragment parent = getParentFragment();
-            return new AlertDialog.Builder(getActivity())
-                    .setMessage(R.string.permission_request)
-                    .setPositiveButton(android.R.string.ok, (dialog, which) -> requestPermissions(VIDEO_PERMISSIONS,
-                            REQUEST_VIDEO_PERMISSIONS))
-                    .setNegativeButton(android.R.string.cancel,
-                            (dialog, which) -> parent.getActivity().finish())
-                    .create();
-        }
 
-    }
 
     public static class ErrorDialog extends DialogFragment {
 
@@ -293,7 +237,7 @@ public class RecordVideoFragment extends DaggerFragment {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
             RecordVideoFragment frag = weakFrag.get();
-            if(frag.isRecording && motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+            if(motionEvent.getAction() == MotionEvent.ACTION_DOWN){
                 AnnotationViewModel m = new AnnotationViewModel(motionEvent.getX(), motionEvent.getY(), frag.mCameraService.appendTexture(),frag.mCameraService.getAnnotationStartTime());
                 frag.displayKeywordsDialog(m, motionEvent.getX(), motionEvent.getY());
             }else{
@@ -307,12 +251,11 @@ public class RecordVideoFragment extends DaggerFragment {
     private void attachAnnotationView(AnnotationViewModel vm){
         mCameraViewModel.addAnnotation(vm.getEntity());
         AnnotationView annotationView = new AnnotationView(getActivity());
-        annotationView.setViewModel(vm);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,(int)getActivity().getResources().getDimension(R.dimen.annotation_height));
-        params.leftMargin = Math.round(vm.getEntity().getX());
-        params.topMargin = Math.round(vm.getEntity().getY());
+        annotationView.setViewModel(vm, new OnAnnnotationInitListener(this));
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,(int)getActivity().getResources().getDimension(R.dimen.annotation_height));
         binding.cameraPreview.addView(annotationView, params);
         detachAnnotationView(annotationView);
+        annotationView = null;
     }
 
     private void detachAnnotationView(AnnotationView view){
@@ -324,10 +267,42 @@ public class RecordVideoFragment extends DaggerFragment {
                 AnnotationView v = wRef.get();
                 FrameLayout layout = wFrag.get();
                 if (v != null && layout != null) {
-                    layout.removeView(v);
+                   // layout.removeView(v);
+                    v = null;
                 }
-            }, 1000);
+            }, 3000);
         });
+    }
+
+    public void onAnnotationAttached(int width, int height, AnnotationViewModel vm, AnnotationView view){
+        if (getActivity() != null) {
+            AnnotationEntity entity = vm.getEntity();
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)view.getLayoutParams();
+            if(ScreenUtils.getScreenWidth(getActivity()) < entity.getX() + width){
+                params.leftMargin = ScreenUtils.getScreenWidth(getActivity()) - width;
+            }
+            else if((entity.getX() - width) < 0){
+                params.rightMargin = width;
+            }else{
+                //params.leftMargin = Math.round(entity.getX())/2;
+                params.leftMargin = Math.round(entity.getX())- width/2;
+            }
+
+            if(entity.getY() > (ScreenUtils.getScreenHeight(getActivity())/2)){
+                params.topMargin = Math.round(entity.getY()) - height;
+            }else{
+                params.topMargin = Math.round(entity.getY());
+            }
+
+//            if(ScreenUtils.getScreenHeight(getActivity()) - (2*getActivity().getResources().getDimension(R.dimen.material_layout_app_bar_height)) < (entity.getY() + height)){
+//                params.topMargin = Math.round(entity.getY()) - height;
+//            }else{
+//                params.topMargin = Math.round(entity.getY());
+//            }
+
+            view.setLayoutParams(params);
+            view.show();
+        }
     }
 
     private static class KeywordsDialogActionListener implements KeywordsDialog.OnActionListener{
@@ -378,6 +353,23 @@ public class RecordVideoFragment extends DaggerFragment {
             if (f != null) {
                 f.displayError(err);
                 f.saveVideoDialog.dismiss();
+            }
+        }
+    }
+
+    private static class OnAnnnotationInitListener implements AnnotationView.OnViewInitialized{
+
+        private WeakReference<RecordVideoFragment> weakFrag;
+
+        public OnAnnnotationInitListener(RecordVideoFragment f) {
+            weakFrag = new WeakReference<>(f);
+        }
+
+        @Override
+        public void onInitialized(int width, int height, AnnotationViewModel vm, AnnotationView view) {
+            RecordVideoFragment frag = weakFrag.get();
+            if (frag != null) {
+                frag.onAnnotationAttached(width, height, vm, view);
             }
         }
     }

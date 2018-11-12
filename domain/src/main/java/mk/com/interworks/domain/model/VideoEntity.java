@@ -31,7 +31,7 @@ public class VideoEntity{
 
 
     @NonNull
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = Constants.ID)
     private long id;
     @ColumnInfo(name = ACTION)

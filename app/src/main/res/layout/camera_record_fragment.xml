@@ -27,7 +27,7 @@
         android:layout_height="match_parent">
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/material_layout_app_bar_height"
             android:clickable="true">
             <View
                 android:layout_width="match_parent"
@@ -44,7 +44,7 @@
         </FrameLayout>
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="@dimen/material_layout_app_bar_height"
             android:layout_alignParentBottom="true">
             <View
                 android:layout_width="match_parent"

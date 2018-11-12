@@ -4,6 +4,9 @@ import android.hardware.Camera;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.interworks.inspektar.R;
 import com.interworks.inspektar.annotations.adapter.KeywordsAdapter;

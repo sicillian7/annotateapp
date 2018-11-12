@@ -73,7 +73,6 @@ public class SaveVideoDialog extends Dialog {
         }
 
         public void onSaveClicked(View view){
-            Log.d(TAG, "OnSaveClicked");
             SaveVideoDialog d = weakDialog.get();
             if (d != null && d.mListener != null) {
                 String title = d.binding.txtVideoName.getText().toString();
@@ -89,7 +88,6 @@ public class SaveVideoDialog extends Dialog {
         }
 
         public void onDiscardClicked(View view){
-            Log.d(TAG, "OnSaveClicked");
             SaveVideoDialog d = weakDialog.get();
             if (d != null && d.mListener != null) {
                 d.mListener.onDiscard();

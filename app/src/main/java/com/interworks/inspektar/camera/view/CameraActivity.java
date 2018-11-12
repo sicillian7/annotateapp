@@ -77,4 +77,10 @@ public class CameraActivity extends AppCompatActivity implements HasSupportFragm
     public static Intent newIntent(Context context) {
         return new Intent(context, CameraActivity.class);
     }
+
+    @Override
+    protected void onDestroy() {
+        binding.unbind();
+        super.onDestroy();
+    }
 }
